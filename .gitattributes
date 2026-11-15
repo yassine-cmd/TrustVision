@@ -1,0 +1,2 @@
+# splits_sha256 in results/s0_clip.json is computed over the exact LF bytes.
+configs/splits.json text eol=lf

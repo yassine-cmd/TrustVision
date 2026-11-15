@@ -1,0 +1,1678 @@
+{
+  "stage": "S0_CLIP",
+  "model": "openai/clip-vit-base-patch32",
+  "splits_sha256": "2848c9ae7cb7c2ef4197ce18e5dd4352d28430724b46953d27b61340921a510c",
+  "theme1_mechanistic_attention": {
+    "max_numerical_discrepancy": 1.6391277313232422e-07,
+    "comparison_target": "Hugging Face CLIPAttention real forward pass (output_attentions=True)",
+    "verified": true
+  },
+  "theme4_zero_shot": {
+    "selection_protocol": "Selected on CAL split (180 images), evaluated on TEST split (360 images)",
+    "selected_prompt": "P1_Minimal",
+    "selected_test_metrics": {
+      "accuracy": 0.2556,
+      "macro_f1": 0.1406,
+      "ece": 0.3458,
+      "nll": 2.7884,
+      "brier": 1.0429,
+      "confusion_matrix": [
+        [
+          0,
+          4,
+          56,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          20,
+          34,
+          0,
+          5
+        ],
+        [
+          0,
+          3,
+          56,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          11,
+          14,
+          35,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          60,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          5,
+          23,
+          32,
+          0,
+          0
+        ]
+      ],
+      "bin_stats": {
+        "accuracies": [
+          0.0,
+          0.0,
+          0.3333,
+          0.18,
+          0.225,
+          0.2222,
+          0.46,
+          0.3659,
+          0.2075,
+          0.05
+        ],
+        "confidences": [
+          0.0,
+          0.0,
+          0.279,
+          0.3528,
+          0.4479,
+          0.5555,
+          0.6491,
+          0.7537,
+          0.8474,
+          0.9284
+        ],
+        "counts": [
+          0,
+          0,
+          3,
+          50,
+          80,
+          63,
+          50,
+          41,
+          53,
+          20
+        ]
+      }
+    },
+    "cal_ablation": {
+      "P1_Minimal": {
+        "accuracy": 0.2778,
+        "macro_f1": 0.1493,
+        "ece": 0.3255,
+        "nll": 2.8629,
+        "brier": 1.0432,
+        "confusion_matrix": [
+          [
+            0,
+            1,
+            29,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            7,
+            18,
+            0,
+            5
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            4,
+            6,
+            20,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            11,
+            16,
+            1,
+            0
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.25,
+            0.16,
+            0.3077,
+            0.2727,
+            0.3158,
+            0.4737,
+            0.25,
+            0.1538
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.2789,
+            0.3713,
+            0.4482,
+            0.547,
+            0.6512,
+            0.7531,
+            0.8479,
+            0.9411
+          ],
+          "counts": [
+            0,
+            0,
+            4,
+            25,
+            39,
+            33,
+            19,
+            19,
+            28,
+            13
+          ]
+        }
+      },
+      "P2_Generic": {
+        "accuracy": 0.2056,
+        "macro_f1": 0.1498,
+        "ece": 0.2326,
+        "nll": 2.4888,
+        "brier": 0.9733,
+        "confusion_matrix": [
+          [
+            0,
+            6,
+            2,
+            11,
+            0,
+            11
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            0,
+            29
+          ],
+          [
+            1,
+            9,
+            8,
+            7,
+            0,
+            5
+          ],
+          [
+            0,
+            8,
+            1,
+            11,
+            0,
+            10
+          ],
+          [
+            1,
+            1,
+            27,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            9,
+            1,
+            18
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.1875,
+            0.2154,
+            0.234,
+            0.24,
+            0.0909,
+            0.2,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.2706,
+            0.3481,
+            0.4364,
+            0.5435,
+            0.6443,
+            0.7283,
+            0.0,
+            0.0
+          ],
+          "counts": [
+            0,
+            0,
+            16,
+            65,
+            47,
+            25,
+            22,
+            5,
+            0,
+            0
+          ]
+        }
+      },
+      "P3_DomainSpecific": {
+        "accuracy": 0.1722,
+        "macro_f1": 0.1024,
+        "ece": 0.2401,
+        "nll": 2.3501,
+        "brier": 0.9603,
+        "confusion_matrix": [
+          [
+            0,
+            1,
+            0,
+            4,
+            0,
+            25
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            30
+          ],
+          [
+            3,
+            1,
+            5,
+            1,
+            0,
+            20
+          ],
+          [
+            0,
+            5,
+            1,
+            3,
+            0,
+            21
+          ],
+          [
+            1,
+            0,
+            26,
+            0,
+            0,
+            3
+          ],
+          [
+            2,
+            0,
+            3,
+            0,
+            2,
+            23
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.08,
+            0.1549,
+            0.3043,
+            0.12,
+            0.0909,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.2762,
+            0.3419,
+            0.45,
+            0.5463,
+            0.6577,
+            0.7218,
+            0.0,
+            0.0
+          ],
+          "counts": [
+            0,
+            0,
+            25,
+            71,
+            46,
+            25,
+            11,
+            2,
+            0,
+            0
+          ]
+        }
+      },
+      "P4_DetailedTexture": {
+        "accuracy": 0.2722,
+        "macro_f1": 0.1809,
+        "ece": 0.1048,
+        "nll": 2.1928,
+        "brier": 0.9032,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            20,
+            9,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            2,
+            8,
+            0,
+            20
+          ],
+          [
+            0,
+            0,
+            29,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            9,
+            12,
+            2,
+            7
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            8,
+            2,
+            11,
+            8
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.2368,
+            0.2759,
+            0.375,
+            0.1364,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.275,
+            0.3419,
+            0.4485,
+            0.5429,
+            0.6162,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "counts": [
+            0,
+            0,
+            38,
+            87,
+            32,
+            22,
+            1,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "P5_QualityInspection": {
+        "accuracy": 0.1722,
+        "macro_f1": 0.1063,
+        "ece": 0.166,
+        "nll": 2.1202,
+        "brier": 0.913,
+        "confusion_matrix": [
+          [
+            0,
+            2,
+            0,
+            9,
+            0,
+            19
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0,
+            28
+          ],
+          [
+            0,
+            5,
+            5,
+            0,
+            0,
+            20
+          ],
+          [
+            0,
+            6,
+            0,
+            3,
+            0,
+            21
+          ],
+          [
+            0,
+            4,
+            14,
+            4,
+            0,
+            8
+          ],
+          [
+            0,
+            1,
+            0,
+            0,
+            6,
+            23
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.1143,
+            0.2368,
+            0.16,
+            0.1429,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.269,
+            0.3411,
+            0.4492,
+            0.5254,
+            0.61,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "counts": [
+            0,
+            0,
+            70,
+            76,
+            25,
+            7,
+            2,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "test_ablation": {
+      "P1_Minimal": {
+        "accuracy": 0.2556,
+        "macro_f1": 0.1406,
+        "ece": 0.3458,
+        "nll": 2.7884,
+        "brier": 1.0429,
+        "confusion_matrix": [
+          [
+            0,
+            4,
+            56,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            20,
+            34,
+            0,
+            5
+          ],
+          [
+            0,
+            3,
+            56,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            11,
+            14,
+            35,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            60,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            5,
+            23,
+            32,
+            0,
+            0
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.3333,
+            0.18,
+            0.225,
+            0.2222,
+            0.46,
+            0.3659,
+            0.2075,
+            0.05
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.279,
+            0.3528,
+            0.4479,
+            0.5555,
+            0.6491,
+            0.7537,
+            0.8474,
+            0.9284
+          ],
+          "counts": [
+            0,
+            0,
+            3,
+            50,
+            80,
+            63,
+            50,
+            41,
+            53,
+            20
+          ]
+        }
+      },
+      "P2_Generic": {
+        "accuracy": 0.2111,
+        "macro_f1": 0.1581,
+        "ece": 0.2227,
+        "nll": 2.4556,
+        "brier": 0.9561,
+        "confusion_matrix": [
+          [
+            0,
+            14,
+            7,
+            15,
+            0,
+            24
+          ],
+          [
+            0,
+            0,
+            0,
+            6,
+            0,
+            54
+          ],
+          [
+            1,
+            33,
+            10,
+            4,
+            0,
+            12
+          ],
+          [
+            0,
+            15,
+            1,
+            33,
+            0,
+            11
+          ],
+          [
+            0,
+            6,
+            50,
+            4,
+            0,
+            0
+          ],
+          [
+            1,
+            2,
+            0,
+            24,
+            0,
+            33
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.1875,
+            0.1704,
+            0.2636,
+            0.1765,
+            0.3636,
+            0.2,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.2736,
+            0.3533,
+            0.4471,
+            0.5536,
+            0.648,
+            0.7399,
+            0.82,
+            0.9453
+          ],
+          "counts": [
+            0,
+            0,
+            32,
+            135,
+            110,
+            51,
+            22,
+            5,
+            3,
+            2
+          ]
+        }
+      },
+      "P3_DomainSpecific": {
+        "accuracy": 0.2028,
+        "macro_f1": 0.1307,
+        "ece": 0.1988,
+        "nll": 2.3171,
+        "brier": 0.944,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            8,
+            0,
+            52
+          ],
+          [
+            7,
+            0,
+            0,
+            0,
+            0,
+            53
+          ],
+          [
+            5,
+            1,
+            9,
+            0,
+            0,
+            45
+          ],
+          [
+            1,
+            9,
+            0,
+            12,
+            0,
+            38
+          ],
+          [
+            2,
+            0,
+            42,
+            0,
+            0,
+            16
+          ],
+          [
+            1,
+            0,
+            5,
+            0,
+            2,
+            52
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.2667,
+            0.1855,
+            0.1848,
+            0.2045,
+            0.1818,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.2707,
+            0.3514,
+            0.4433,
+            0.534,
+            0.643,
+            0.7137,
+            0.8262,
+            0.0
+          ],
+          "counts": [
+            0,
+            0,
+            75,
+            124,
+            92,
+            44,
+            22,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "P4_DetailedTexture": {
+        "accuracy": 0.3278,
+        "macro_f1": 0.2311,
+        "ece": 0.0764,
+        "nll": 2.1601,
+        "brier": 0.8937,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            49,
+            8,
+            0,
+            3
+          ],
+          [
+            0,
+            0,
+            6,
+            12,
+            0,
+            42
+          ],
+          [
+            0,
+            0,
+            59,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            16,
+            35,
+            4,
+            5
+          ],
+          [
+            0,
+            0,
+            60,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            15,
+            4,
+            15,
+            24
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.3483,
+            0.3376,
+            0.3837,
+            0.04,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.2732,
+            0.3443,
+            0.4484,
+            0.5254,
+            0.63,
+            0.7851,
+            0.0,
+            0.0
+          ],
+          "counts": [
+            0,
+            0,
+            89,
+            157,
+            86,
+            25,
+            2,
+            1,
+            0,
+            0
+          ]
+        }
+      },
+      "P5_QualityInspection": {
+        "accuracy": 0.1806,
+        "macro_f1": 0.0999,
+        "ece": 0.1632,
+        "nll": 2.105,
+        "brier": 0.9111,
+        "confusion_matrix": [
+          [
+            0,
+            5,
+            0,
+            15,
+            0,
+            40
+          ],
+          [
+            0,
+            0,
+            0,
+            5,
+            0,
+            55
+          ],
+          [
+            0,
+            13,
+            8,
+            1,
+            0,
+            38
+          ],
+          [
+            0,
+            13,
+            0,
+            4,
+            0,
+            43
+          ],
+          [
+            0,
+            5,
+            24,
+            4,
+            0,
+            27
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            6,
+            53
+          ]
+        ],
+        "bin_stats": {
+          "accuracies": [
+            0.0,
+            0.0,
+            0.146,
+            0.1769,
+            0.2885,
+            0.2105,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "confidences": [
+            0.0,
+            0.0,
+            0.2728,
+            0.3398,
+            0.4372,
+            0.5394,
+            0.6501,
+            0.0,
+            0.8372,
+            0.0
+          ],
+          "counts": [
+            0,
+            0,
+            137,
+            147,
+            52,
+            19,
+            4,
+            0,
+            1,
+            0
+          ]
+        }
+      }
+    }
+  },
+  "theme4_linear_probe": {
+    "checkpoint": "checkpoints/clip_linear_probe.pt",
+    "uncalibrated": {
+      "accuracy": 0.9944,
+      "macro_f1": 0.9945,
+      "ece": 0.0173,
+      "nll": 0.0257,
+      "brier": 0.0092,
+      "confusion_matrix": [
+        [
+          59,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          60,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          60,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          60,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          60,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          59
+        ]
+      ],
+      "bin_stats": {
+        "accuracies": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.6667,
+          1.0,
+          1.0
+        ],
+        "confidences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5086,
+          0.6738,
+          0.7717,
+          0.8549,
+          0.9906
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          3,
+          3,
+          8,
+          345
+        ]
+      }
+    },
+    "calibrated": {
+      "accuracy": 0.9944,
+      "macro_f1": 0.9945,
+      "ece": 0.0056,
+      "nll": 0.0159,
+      "brier": 0.0088,
+      "confusion_matrix": [
+        [
+          59,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          60,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          60,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          60,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          60,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          59
+        ]
+      ],
+      "bin_stats": {
+        "accuracies": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.9972
+        ],
+        "confidences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.7534,
+          0.8615,
+          0.9995
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          3,
+          356
+        ]
+      }
+    },
+    "optimal_temperature": 0.4184,
+    "rob_acc_003": 0.2111,
+    "tau95": 0.994,
+    "loss_curve": [
+      1.7925,
+      0.608,
+      0.2716,
+      0.1631,
+      0.1161,
+      0.0909,
+      0.0752,
+      0.0643,
+      0.0561,
+      0.0497,
+      0.0445,
+      0.0402,
+      0.0366,
+      0.0335,
+      0.0308,
+      0.0285,
+      0.0265,
+      0.0247,
+      0.023,
+      0.0216,
+      0.0203,
+      0.0191,
+      0.0181,
+      0.0171,
+      0.0162,
+      0.0154,
+      0.0147,
+      0.014,
+      0.0134,
+      0.0128
+    ]
+  },
+  "reference_attention_maps": {
+    "file": "results/clip_attn_test.npy",
+    "shape": [
+      360,
+      12,
+      7,
+      7
+    ],
+    "description": "Multi-layer ViT CLS-to-patch attention maps averaged over 12 heads for all 12 layers",
+    "status": "Reference maps (not ground truth)"
+  },
+  "cross_effects_input": {
+    "clip_zero_shot_acc": 0.2556,
+    "clip_zero_shot_macro_f1": 0.1406,
+    "clip_zero_shot_ece": 0.3458,
+    "clip_linear_probe_acc": 0.9944,
+    "clip_linear_probe_macro_f1": 0.9945,
+    "clip_linear_probe_ece_uncalibrated": 0.0173,
+    "clip_linear_probe_ece_calibrated": 0.0056,
+    "clip_linear_probe_rob_acc_003": 0.2111,
+    "selective_threshold_tau95": 0.994,
+    "clip_linear_probe_temperature": 0.4184,
+    "attention_maps_file": "results/clip_attn_test.npy",
+    "test_files": [
+      "crazing/crazing_10.jpg",
+      "crazing/crazing_101.jpg",
+      "crazing/crazing_110.jpg",
+      "crazing/crazing_117.jpg",
+      "crazing/crazing_118.jpg",
+      "crazing/crazing_13.jpg",
+      "crazing/crazing_138.jpg",
+      "crazing/crazing_142.jpg",
+      "crazing/crazing_143.jpg",
+      "crazing/crazing_144.jpg",
+      "crazing/crazing_146.jpg",
+      "crazing/crazing_147.jpg",
+      "crazing/crazing_148.jpg",
+      "crazing/crazing_151.jpg",
+      "crazing/crazing_163.jpg",
+      "crazing/crazing_171.jpg",
+      "crazing/crazing_178.jpg",
+      "crazing/crazing_179.jpg",
+      "crazing/crazing_181.jpg",
+      "crazing/crazing_189.jpg",
+      "crazing/crazing_191.jpg",
+      "crazing/crazing_192.jpg",
+      "crazing/crazing_194.jpg",
+      "crazing/crazing_195.jpg",
+      "crazing/crazing_208.jpg",
+      "crazing/crazing_216.jpg",
+      "crazing/crazing_217.jpg",
+      "crazing/crazing_219.jpg",
+      "crazing/crazing_22.jpg",
+      "crazing/crazing_23.jpg",
+      "crazing/crazing_233.jpg",
+      "crazing/crazing_235.jpg",
+      "crazing/crazing_243.jpg",
+      "crazing/crazing_244.jpg",
+      "crazing/crazing_249.jpg",
+      "crazing/crazing_251.jpg",
+      "crazing/crazing_256.jpg",
+      "crazing/crazing_268.jpg",
+      "crazing/crazing_269.jpg",
+      "crazing/crazing_27.jpg",
+      "crazing/crazing_270.jpg",
+      "crazing/crazing_271.jpg",
+      "crazing/crazing_280.jpg",
+      "crazing/crazing_284.jpg",
+      "crazing/crazing_292.jpg",
+      "crazing/crazing_295.jpg",
+      "crazing/crazing_298.jpg",
+      "crazing/crazing_40.jpg",
+      "crazing/crazing_46.jpg",
+      "crazing/crazing_48.jpg",
+      "crazing/crazing_55.jpg",
+      "crazing/crazing_56.jpg",
+      "crazing/crazing_60.jpg",
+      "crazing/crazing_72.jpg",
+      "crazing/crazing_75.jpg",
+      "crazing/crazing_78.jpg",
+      "crazing/crazing_88.jpg",
+      "crazing/crazing_94.jpg",
+      "crazing/crazing_98.jpg",
+      "crazing/crazing_99.jpg",
+      "inclusion/inclusion_101.jpg",
+      "inclusion/inclusion_103.jpg",
+      "inclusion/inclusion_11.jpg",
+      "inclusion/inclusion_113.jpg",
+      "inclusion/inclusion_114.jpg",
+      "inclusion/inclusion_116.jpg",
+      "inclusion/inclusion_121.jpg",
+      "inclusion/inclusion_122.jpg",
+      "inclusion/inclusion_13.jpg",
+      "inclusion/inclusion_130.jpg",
+      "inclusion/inclusion_131.jpg",
+      "inclusion/inclusion_133.jpg",
+      "inclusion/inclusion_14.jpg",
+      "inclusion/inclusion_142.jpg",
+      "inclusion/inclusion_143.jpg",
+      "inclusion/inclusion_147.jpg",
+      "inclusion/inclusion_15.jpg",
+      "inclusion/inclusion_150.jpg",
+      "inclusion/inclusion_152.jpg",
+      "inclusion/inclusion_157.jpg",
+      "inclusion/inclusion_184.jpg",
+      "inclusion/inclusion_186.jpg",
+      "inclusion/inclusion_188.jpg",
+      "inclusion/inclusion_192.jpg",
+      "inclusion/inclusion_200.jpg",
+      "inclusion/inclusion_202.jpg",
+      "inclusion/inclusion_212.jpg",
+      "inclusion/inclusion_213.jpg",
+      "inclusion/inclusion_22.jpg",
+      "inclusion/inclusion_230.jpg",
+      "inclusion/inclusion_234.jpg",
+      "inclusion/inclusion_235.jpg",
+      "inclusion/inclusion_236.jpg",
+      "inclusion/inclusion_238.jpg",
+      "inclusion/inclusion_240.jpg",
+      "inclusion/inclusion_243.jpg",
+      "inclusion/inclusion_251.jpg",
+      "inclusion/inclusion_253.jpg",
+      "inclusion/inclusion_254.jpg",
+      "inclusion/inclusion_255.jpg",
+      "inclusion/inclusion_257.jpg",
+      "inclusion/inclusion_261.jpg",
+      "inclusion/inclusion_268.jpg",
+      "inclusion/inclusion_270.jpg",
+      "inclusion/inclusion_271.jpg",
+      "inclusion/inclusion_297.jpg",
+      "inclusion/inclusion_298.jpg",
+      "inclusion/inclusion_3.jpg",
+      "inclusion/inclusion_31.jpg",
+      "inclusion/inclusion_38.jpg",
+      "inclusion/inclusion_5.jpg",
+      "inclusion/inclusion_50.jpg",
+      "inclusion/inclusion_56.jpg",
+      "inclusion/inclusion_59.jpg",
+      "inclusion/inclusion_78.jpg",
+      "inclusion/inclusion_82.jpg",
+      "inclusion/inclusion_83.jpg",
+      "inclusion/inclusion_84.jpg",
+      "inclusion/inclusion_86.jpg",
+      "inclusion/inclusion_96.jpg",
+      "patches/patches_1.jpg",
+      "patches/patches_100.jpg",
+      "patches/patches_109.jpg",
+      "patches/patches_110.jpg",
+      "patches/patches_112.jpg",
+      "patches/patches_115.jpg",
+      "patches/patches_116.jpg",
+      "patches/patches_133.jpg",
+      "patches/patches_138.jpg",
+      "patches/patches_140.jpg",
+      "patches/patches_147.jpg",
+      "patches/patches_150.jpg",
+      "patches/patches_161.jpg",
+      "patches/patches_165.jpg",
+      "patches/patches_170.jpg",
+      "patches/patches_180.jpg",
+      "patches/patches_190.jpg",
+      "patches/patches_203.jpg",
+      "patches/patches_204.jpg",
+      "patches/patches_211.jpg",
+      "patches/patches_217.jpg",
+      "patches/patches_219.jpg",
+      "patches/patches_225.jpg",
+      "patches/patches_227.jpg",
+      "patches/patches_228.jpg",
+      "patches/patches_230.jpg",
+      "patches/patches_231.jpg",
+      "patches/patches_232.jpg",
+      "patches/patches_241.jpg",
+      "patches/patches_242.jpg",
+      "patches/patches_246.jpg",
+      "patches/patches_249.jpg",
+      "patches/patches_254.jpg",
+      "patches/patches_262.jpg",
+      "patches/patches_265.jpg",
+      "patches/patches_27.jpg",
+      "patches/patches_270.jpg",
+      "patches/patches_279.jpg",
+      "patches/patches_280.jpg",
+      "patches/patches_281.jpg",
+      "patches/patches_290.jpg",
+      "patches/patches_292.jpg",
+      "patches/patches_294.jpg",
+      "patches/patches_297.jpg",
+      "patches/patches_30.jpg",
+      "patches/patches_32.jpg",
+      "patches/patches_34.jpg",
+      "patches/patches_38.jpg",
+      "patches/patches_46.jpg",
+      "patches/patches_55.jpg",
+      "patches/patches_69.jpg",
+      "patches/patches_74.jpg",
+      "patches/patches_76.jpg",
+      "patches/patches_78.jpg",
+      "patches/patches_80.jpg",
+      "patches/patches_82.jpg",
+      "patches/patches_87.jpg",
+      "patches/patches_88.jpg",
+      "patches/patches_91.jpg",
+      "patches/patches_95.jpg",
+      "pitted_surface/pitted_surface_1.jpg",
+      "pitted_surface/pitted_surface_101.jpg",
+      "pitted_surface/pitted_surface_102.jpg",
+      "pitted_surface/pitted_surface_103.jpg",
+      "pitted_surface/pitted_surface_107.jpg",
+      "pitted_surface/pitted_surface_11.jpg",
+      "pitted_surface/pitted_surface_116.jpg",
+      "pitted_surface/pitted_surface_121.jpg",
+      "pitted_surface/pitted_surface_126.jpg",
+      "pitted_surface/pitted_surface_130.jpg",
+      "pitted_surface/pitted_surface_132.jpg",
+      "pitted_surface/pitted_surface_134.jpg",
+      "pitted_surface/pitted_surface_140.jpg",
+      "pitted_surface/pitted_surface_154.jpg",
+      "pitted_surface/pitted_surface_155.jpg",
+      "pitted_surface/pitted_surface_157.jpg",
+      "pitted_surface/pitted_surface_161.jpg",
+      "pitted_surface/pitted_surface_166.jpg",
+      "pitted_surface/pitted_surface_174.jpg",
+      "pitted_surface/pitted_surface_18.jpg",
+      "pitted_surface/pitted_surface_183.jpg",
+      "pitted_surface/pitted_surface_184.jpg",
+      "pitted_surface/pitted_surface_19.jpg",
+      "pitted_surface/pitted_surface_2.jpg",
+      "pitted_surface/pitted_surface_20.jpg",
+      "pitted_surface/pitted_surface_204.jpg",
+      "pitted_surface/pitted_surface_215.jpg",
+      "pitted_surface/pitted_surface_218.jpg",
+      "pitted_surface/pitted_surface_219.jpg",
+      "pitted_surface/pitted_surface_221.jpg",
+      "pitted_surface/pitted_surface_222.jpg",
+      "pitted_surface/pitted_surface_223.jpg",
+      "pitted_surface/pitted_surface_224.jpg",
+      "pitted_surface/pitted_surface_226.jpg",
+      "pitted_surface/pitted_surface_233.jpg",
+      "pitted_surface/pitted_surface_234.jpg",
+      "pitted_surface/pitted_surface_235.jpg",
+      "pitted_surface/pitted_surface_243.jpg",
+      "pitted_surface/pitted_surface_25.jpg",
+      "pitted_surface/pitted_surface_253.jpg",
+      "pitted_surface/pitted_surface_254.jpg",
+      "pitted_surface/pitted_surface_259.jpg",
+      "pitted_surface/pitted_surface_273.jpg",
+      "pitted_surface/pitted_surface_277.jpg",
+      "pitted_surface/pitted_surface_281.jpg",
+      "pitted_surface/pitted_surface_29.jpg",
+      "pitted_surface/pitted_surface_297.jpg",
+      "pitted_surface/pitted_surface_3.jpg",
+      "pitted_surface/pitted_surface_300.jpg",
+      "pitted_surface/pitted_surface_34.jpg",
+      "pitted_surface/pitted_surface_47.jpg",
+      "pitted_surface/pitted_surface_50.jpg",
+      "pitted_surface/pitted_surface_51.jpg",
+      "pitted_surface/pitted_surface_57.jpg",
+      "pitted_surface/pitted_surface_78.jpg",
+      "pitted_surface/pitted_surface_79.jpg",
+      "pitted_surface/pitted_surface_89.jpg",
+      "pitted_surface/pitted_surface_92.jpg",
+      "pitted_surface/pitted_surface_96.jpg",
+      "pitted_surface/pitted_surface_99.jpg",
+      "rolled-in_scale/rolled-in_scale_10.jpg",
+      "rolled-in_scale/rolled-in_scale_104.jpg",
+      "rolled-in_scale/rolled-in_scale_105.jpg",
+      "rolled-in_scale/rolled-in_scale_108.jpg",
+      "rolled-in_scale/rolled-in_scale_116.jpg",
+      "rolled-in_scale/rolled-in_scale_12.jpg",
+      "rolled-in_scale/rolled-in_scale_130.jpg",
+      "rolled-in_scale/rolled-in_scale_144.jpg",
+      "rolled-in_scale/rolled-in_scale_146.jpg",
+      "rolled-in_scale/rolled-in_scale_147.jpg",
+      "rolled-in_scale/rolled-in_scale_148.jpg",
+      "rolled-in_scale/rolled-in_scale_151.jpg",
+      "rolled-in_scale/rolled-in_scale_159.jpg",
+      "rolled-in_scale/rolled-in_scale_169.jpg",
+      "rolled-in_scale/rolled-in_scale_171.jpg",
+      "rolled-in_scale/rolled-in_scale_172.jpg",
+      "rolled-in_scale/rolled-in_scale_175.jpg",
+      "rolled-in_scale/rolled-in_scale_176.jpg",
+      "rolled-in_scale/rolled-in_scale_177.jpg",
+      "rolled-in_scale/rolled-in_scale_178.jpg",
+      "rolled-in_scale/rolled-in_scale_181.jpg",
+      "rolled-in_scale/rolled-in_scale_185.jpg",
+      "rolled-in_scale/rolled-in_scale_186.jpg",
+      "rolled-in_scale/rolled-in_scale_188.jpg",
+      "rolled-in_scale/rolled-in_scale_196.jpg",
+      "rolled-in_scale/rolled-in_scale_2.jpg",
+      "rolled-in_scale/rolled-in_scale_205.jpg",
+      "rolled-in_scale/rolled-in_scale_206.jpg",
+      "rolled-in_scale/rolled-in_scale_213.jpg",
+      "rolled-in_scale/rolled-in_scale_230.jpg",
+      "rolled-in_scale/rolled-in_scale_234.jpg",
+      "rolled-in_scale/rolled-in_scale_240.jpg",
+      "rolled-in_scale/rolled-in_scale_243.jpg",
+      "rolled-in_scale/rolled-in_scale_244.jpg",
+      "rolled-in_scale/rolled-in_scale_247.jpg",
+      "rolled-in_scale/rolled-in_scale_253.jpg",
+      "rolled-in_scale/rolled-in_scale_259.jpg",
+      "rolled-in_scale/rolled-in_scale_262.jpg",
+      "rolled-in_scale/rolled-in_scale_268.jpg",
+      "rolled-in_scale/rolled-in_scale_274.jpg",
+      "rolled-in_scale/rolled-in_scale_276.jpg",
+      "rolled-in_scale/rolled-in_scale_280.jpg",
+      "rolled-in_scale/rolled-in_scale_292.jpg",
+      "rolled-in_scale/rolled-in_scale_299.jpg",
+      "rolled-in_scale/rolled-in_scale_3.jpg",
+      "rolled-in_scale/rolled-in_scale_31.jpg",
+      "rolled-in_scale/rolled-in_scale_34.jpg",
+      "rolled-in_scale/rolled-in_scale_39.jpg",
+      "rolled-in_scale/rolled-in_scale_42.jpg",
+      "rolled-in_scale/rolled-in_scale_43.jpg",
+      "rolled-in_scale/rolled-in_scale_48.jpg",
+      "rolled-in_scale/rolled-in_scale_50.jpg",
+      "rolled-in_scale/rolled-in_scale_52.jpg",
+      "rolled-in_scale/rolled-in_scale_53.jpg",
+      "rolled-in_scale/rolled-in_scale_58.jpg",
+      "rolled-in_scale/rolled-in_scale_59.jpg",
+      "rolled-in_scale/rolled-in_scale_65.jpg",
+      "rolled-in_scale/rolled-in_scale_66.jpg",
+      "rolled-in_scale/rolled-in_scale_80.jpg",
+      "rolled-in_scale/rolled-in_scale_88.jpg",
+      "scratches/scratches_100.jpg",
+      "scratches/scratches_102.jpg",
+      "scratches/scratches_106.jpg",
+      "scratches/scratches_116.jpg",
+      "scratches/scratches_120.jpg",
+      "scratches/scratches_123.jpg",
+      "scratches/scratches_124.jpg",
+      "scratches/scratches_131.jpg",
+      "scratches/scratches_132.jpg",
+      "scratches/scratches_134.jpg",
+      "scratches/scratches_140.jpg",
+      "scratches/scratches_147.jpg",
+      "scratches/scratches_152.jpg",
+      "scratches/scratches_153.jpg",
+      "scratches/scratches_154.jpg",
+      "scratches/scratches_16.jpg",
+      "scratches/scratches_163.jpg",
+      "scratches/scratches_171.jpg",
+      "scratches/scratches_179.jpg",
+      "scratches/scratches_18.jpg",
+      "scratches/scratches_187.jpg",
+      "scratches/scratches_188.jpg",
+      "scratches/scratches_193.jpg",
+      "scratches/scratches_195.jpg",
+      "scratches/scratches_200.jpg",
+      "scratches/scratches_206.jpg",
+      "scratches/scratches_209.jpg",
+      "scratches/scratches_21.jpg",
+      "scratches/scratches_218.jpg",
+      "scratches/scratches_221.jpg",
+      "scratches/scratches_229.jpg",
+      "scratches/scratches_23.jpg",
+      "scratches/scratches_242.jpg",
+      "scratches/scratches_251.jpg",
+      "scratches/scratches_257.jpg",
+      "scratches/scratches_258.jpg",
+      "scratches/scratches_259.jpg",
+      "scratches/scratches_274.jpg",
+      "scratches/scratches_276.jpg",
+      "scratches/scratches_277.jpg",
+      "scratches/scratches_283.jpg",
+      "scratches/scratches_292.jpg",
+      "scratches/scratches_293.jpg",
+      "scratches/scratches_295.jpg",
+      "scratches/scratches_31.jpg",
+      "scratches/scratches_32.jpg",
+      "scratches/scratches_45.jpg",
+      "scratches/scratches_47.jpg",
+      "scratches/scratches_5.jpg",
+      "scratches/scratches_54.jpg",
+      "scratches/scratches_56.jpg",
+      "scratches/scratches_61.jpg",
+      "scratches/scratches_63.jpg",
+      "scratches/scratches_64.jpg",
+      "scratches/scratches_66.jpg",
+      "scratches/scratches_69.jpg",
+      "scratches/scratches_70.jpg",
+      "scratches/scratches_87.jpg",
+      "scratches/scratches_95.jpg",
+      "scratches/scratches_97.jpg"
+    ],
+    "splits_sha256": "2d437e1b1e3e9a2981f57c213e180e28c3292a3da31a8f2ca2ae57cd15bf558e"
+  }
+}

@@ -10,7 +10,6 @@ Shared Model Contract:
 from typing import Optional
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class InputNormalization(nn.Module):
@@ -67,7 +66,6 @@ class TrustVisionCNN(nn.Module):
     ):
         super().__init__()
         self.num_classes = num_classes
-        self.feature_dim = feature_dim
 
         # Input normalization wrapper
         self.norm = InputNormalization() if normalize_input else nn.Identity()
@@ -78,11 +76,19 @@ class TrustVisionCNN(nn.Module):
         self.block3 = ConvBlock(64, 128, pool=True)   # 24 -> 12
         self.block4 = ConvBlock(128, 256, pool=True)  # 12 -> 6
 
+        expected_feature_dim = self.block4.conv.out_channels
+        if feature_dim != expected_feature_dim:
+            raise ValueError(
+                f"feature_dim={feature_dim} does not match block4 output channels "
+                f"({expected_feature_dim})."
+            )
+        self.feature_dim = expected_feature_dim
+
         self.global_pool = nn.AdaptiveAvgPool2d((1, 1))
         self.dropout = nn.Dropout(p=0.3)
 
         # Classification Head
-        self.fc = nn.Linear(feature_dim, num_classes)
+        self.fc = nn.Linear(self.feature_dim, num_classes)
 
     def get_last_conv_layer(self) -> nn.Conv2d:
         """

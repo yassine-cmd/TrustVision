@@ -28,4 +28,9 @@ agent.md
 # Documentation / Local Documents
 docs/
 
+# Datasets & Local Data
+data/
+*.zip
+
+
 
