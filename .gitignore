@@ -20,3 +20,11 @@ ENV/
 .DS_Store
 Thumbs.db
 ~$*
+
+# Agent Context & Local Files
+agent.md
+
+# Documentation / Local Documents
+docs/
+
+
