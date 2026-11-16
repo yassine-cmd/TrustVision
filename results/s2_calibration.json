@@ -1,0 +1,118 @@
+{
+  "stage": "S2_CALIBRATION_AND_XAI",
+  "model": "TrustVisionCNN_Baseline",
+  "checkpoint": "checkpoints/cnn_base_seed42.pt",
+  "seed": 42,
+  "temperature_scaling": {
+    "optimal_temperature_T": 0.9279,
+    "argmax_invariant": true,
+    "uncalibrated_test_metrics": {
+      "accuracy": 0.9806,
+      "ece": 0.0129,
+      "ece_ci": [
+        0.0094,
+        0.0285
+      ],
+      "nll": 0.059,
+      "brier": 0.0305,
+      "bin_stats": {
+        "accuracies": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.800000011920929,
+          1.0,
+          0.8666666746139526,
+          0.996960461139679
+        ],
+        "confidences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5844545364379883,
+          0.6371577978134155,
+          0.7497409582138062,
+          0.8594744205474854,
+          0.9909619092941284
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          5,
+          5,
+          15,
+          329
+        ]
+      }
+    },
+    "calibrated_test_metrics": {
+      "accuracy": 0.9806,
+      "ece": 0.0121,
+      "ece_ci": [
+        0.0079,
+        0.0263
+      ],
+      "nll": 0.0566,
+      "brier": 0.0302,
+      "bin_stats": {
+        "accuracies": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.5555555820465088,
+          1.0,
+          0.8333333134651184,
+          0.9969969987869263
+        ],
+        "confidences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5780408978462219,
+          0.6325899362564087,
+          0.7632533311843872,
+          0.8624825477600098,
+          0.9924229979515076
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          9,
+          4,
+          12,
+          333
+        ]
+      }
+    },
+    "ece_reduction": 0.0008,
+    "nll_reduction": 0.0024
+  },
+  "xai_methods_comparison": {
+    "num_compared": 120,
+    "gradcam_vs_ig_mean_cosine": 0.7835,
+    "gradcam_vs_ig_std_cosine": 0.0959,
+    "ig_mean_completeness_rel_error": 0.0356
+  },
+  "xai_clip_vit_attention_alignment": {
+    "reference_file": "results\\clip_attn_test.npy",
+    "mean_cosine_similarity": 0.7663
+  }
+}

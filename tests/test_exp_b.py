@@ -181,3 +181,96 @@ def test_xai_similarity_and_intra_stability():
     map_scaled = map_a * 0.05 + 0.001
     cos_sim = compute_xai_similarity(map_a[0], map_scaled[0], method="cosine")
     assert abs(cos_sim - 1.0) < 1e-4
+
+
+def test_gradcam_and_integrated_gradients():
+    """Verifies Grad-CAM and Integrated Gradients execution, output shapes and completeness."""
+    from src.xai_cal_adv import GradCAM, integrated_gradients
+
+    model = TrustVisionCNN(num_classes=6, normalize_input=True)
+    model.eval()
+
+    dummy_imgs = torch.rand(3, 3, 96, 96)
+    gradcam = GradCAM(model)
+    cam_maps = gradcam(dummy_imgs)
+    gradcam.remove_hooks()
+
+    assert cam_maps.shape == (3, 96, 96)
+    assert cam_maps.min() >= 0.0 and cam_maps.max() <= 1.0 + 1e-5
+
+    ig_maps, comp_stats = integrated_gradients(model, dummy_imgs, steps=15)
+    assert ig_maps.shape == (3, 96, 96)
+    assert ig_maps.min() >= 0.0 and ig_maps.max() <= 1.0 + 1e-5
+    assert "mean_rel_completeness_error" in comp_stats
+    assert comp_stats["mean_rel_completeness_error"] >= 0.0
+
+
+def test_ece_bootstrap():
+    """Verifies that non-parametric bootstrap ECE produces valid confidence intervals."""
+    from src.xai_cal_adv import compute_ece_with_bootstrap
+
+    probs = torch.softmax(torch.randn(100, 6), dim=1)
+    labels = torch.randint(0, 6, (100,))
+
+    res = compute_ece_with_bootstrap(probs, labels, n_bins=10, n_bootstraps=200, seed=42)
+    assert 0.0 <= res["ece"] <= 1.0
+    assert 0.0 <= res["ci_lower"] <= res["ece"] <= res["ci_upper"] <= 1.0
+
+
+def test_adversarial_checkpoint_exists():
+    """Verifies that checkpoints/cnn_adv_seed42.pt is created and valid."""
+    adv_ckpt = Path("checkpoints/cnn_adv_seed42.pt")
+    assert adv_ckpt.exists(), "checkpoints/cnn_adv_seed42.pt must exist (Livrable 3d)"
+
+    model = load_model_checkpoint(adv_ckpt, device=torch.device("cpu"))
+    assert isinstance(model, TrustVisionCNN)
+
+
+def test_json_results_schemas():
+    """Verifies that results JSON files adhere strictly to schema and contain real numbers."""
+    # 1. S2 Calibration JSON
+    s2_file = Path("results/s2_calibration.json")
+    assert s2_file.exists(), "results/s2_calibration.json must exist (Livrable 5)"
+    with open(s2_file, "r", encoding="utf-8") as f:
+        s2 = json.load(f)
+    assert s2["stage"] == "S2_CALIBRATION_AND_XAI"
+    assert s2["temperature_scaling"]["argmax_invariant"] is True
+    assert 0.0 <= s2["temperature_scaling"]["calibrated_test_metrics"]["ece"] <= 1.0
+    assert s2["xai_methods_comparison"]["gradcam_vs_ig_mean_cosine"] is not None
+
+    # 2. S3 Adversarial JSON
+    s3_file = Path("results/s3_adversarial.json")
+    assert s3_file.exists(), "results/s3_adversarial.json must exist (Livrable 5)"
+    with open(s3_file, "r", encoding="utf-8") as f:
+        s3 = json.load(f)
+    assert s3["stage"] == "S3_ADVERSARIAL_ROBUSTNESS"
+    assert s3["rob_acc_003_comparison"]["adv_trained"] > s3["rob_acc_003_comparison"]["clean_baseline"]
+    assert s3["defense_effect_on_explanations"]["intra_pipeline_stability"]["gradcam_cosine_similarity"] > 0.5
+
+    # 3. Cross-Effects Table JSON
+    cross_file = Path("results/cross_effects_table.json")
+    assert cross_file.exists(), "results/cross_effects_table.json must exist (Livrable 5)"
+    with open(cross_file, "r", encoding="utf-8") as f:
+        cross = json.load(f)
+    stages = [r["stage"] for r in cross["rows"]]
+    assert "S0_CLIP_LinearProbe" in stages
+    assert "S2_CNN_Base_Calibrated" in stages
+    assert "S3_CNN_Adversarial_Defense" in stages
+
+
+def test_gradio_tab3_auditor_contract():
+    """Verifies that Gradio Tab 3 handler operates in under 500ms and returns valid keys."""
+    from src.gradio_tab3 import TrustVisionTab3Auditor
+
+    auditor = TrustVisionTab3Auditor()
+    dummy_img = torch.rand(3, 96, 96)
+
+    res = auditor.audit(dummy_img, temperature=1.3, epsilon=0.03, include_ig=True, ig_steps=10)
+    assert res["sub_500ms_contract_met"] is True
+    assert res["latency_ms"] < 500.0
+    assert res["predicted_class"] in auditor.classes
+    assert 0.0 <= res["confidence"] <= 1.0
+    assert res["grad_cam_map"].shape == (96, 96)
+    assert res["integrated_gradients_map"].shape == (96, 96)
+    assert res["perturbed_image"].shape == (96, 96, 3)
+

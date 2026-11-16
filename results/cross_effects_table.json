@@ -1,0 +1,85 @@
+{
+  "title": "TrustVision Cross-Effects Comparative Matrix (S0 to S4)",
+  "split_distribution": "70% train (1260) / 10% cal (180) / 20% test (360)",
+  "seed": 42,
+  "columns": [
+    "stage",
+    "acc",
+    "macro_f1",
+    "ece",
+    "nll",
+    "brier",
+    "rob_acc_003",
+    "xai_sim",
+    "intra_xai_stab",
+    "forgetting",
+    "status"
+  ],
+  "rows": [
+    {
+      "stage": "S0_CLIP_LinearProbe",
+      "acc": 0.9944,
+      "macro_f1": 0.9945,
+      "ece": 0.0056,
+      "nll": 0.021,
+      "brier": 0.009,
+      "rob_acc_003": 0.2111,
+      "xai_sim": 1.0,
+      "intra_xai_stab": null,
+      "forgetting": null,
+      "status": "COMPLETED"
+    },
+    {
+      "stage": "S1_SimCLR",
+      "acc": null,
+      "macro_f1": null,
+      "ece": null,
+      "nll": null,
+      "brier": null,
+      "rob_acc_003": null,
+      "xai_sim": null,
+      "intra_xai_stab": null,
+      "forgetting": null,
+      "status": "PENDING_MEMBER_C"
+    },
+    {
+      "stage": "S2_CNN_Base_Calibrated",
+      "acc": 0.9806,
+      "macro_f1": 0.9806,
+      "ece": 0.0129,
+      "nll": 0.059,
+      "brier": 0.0305,
+      "rob_acc_003": 0.2139,
+      "xai_sim": 0.7663,
+      "intra_xai_stab": null,
+      "forgetting": null,
+      "status": "COMPLETED"
+    },
+    {
+      "stage": "S3_CNN_Adversarial_Defense",
+      "acc": 0.95,
+      "macro_f1": 0.9501,
+      "ece": 0.0391,
+      "nll": 0.1475,
+      "brier": 0.0748,
+      "rob_acc_003": 0.7694,
+      "xai_sim": null,
+      "intra_xai_stab": 0.8336,
+      "forgetting": null,
+      "status": "COMPLETED"
+    },
+    {
+      "stage": "S4_EWC_Continual",
+      "acc": null,
+      "macro_f1": null,
+      "ece": null,
+      "nll": null,
+      "brier": null,
+      "rob_acc_003": null,
+      "xai_sim": null,
+      "intra_xai_stab": null,
+      "forgetting": null,
+      "status": "PENDING_MEMBER_C"
+    }
+  ]
+}

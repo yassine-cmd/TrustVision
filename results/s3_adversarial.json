@@ -1,0 +1,89 @@
+{
+  "stage": "S3_ADVERSARIAL_ROBUSTNESS",
+  "clean_checkpoint": "checkpoints/cnn_base_seed42.pt",
+  "adv_checkpoint": "checkpoints/cnn_adv_seed42.pt",
+  "seed": 42,
+  "epsilon_sweep": [
+    0.0,
+    0.01,
+    0.03,
+    0.05,
+    0.1
+  ],
+  "clean_model_sweep": {
+    "0.0": {
+      "accuracy": 0.9806,
+      "nll": 0.059,
+      "correct": 353,
+      "total": 360
+    },
+    "0.01": {
+      "accuracy": 0.3611,
+      "nll": 2.8895,
+      "correct": 130,
+      "total": 360
+    },
+    "0.03": {
+      "accuracy": 0.2139,
+      "nll": 10.2307,
+      "correct": 77,
+      "total": 360
+    },
+    "0.05": {
+      "accuracy": 0.1861,
+      "nll": 17.648,
+      "correct": 67,
+      "total": 360
+    },
+    "0.1": {
+      "accuracy": 0.1667,
+      "nll": 38.352,
+      "correct": 60,
+      "total": 360
+    }
+  },
+  "adv_model_sweep": {
+    "0.0": {
+      "accuracy": 0.95,
+      "nll": 0.1475,
+      "correct": 342,
+      "total": 360
+    },
+    "0.01": {
+      "accuracy": 0.8306,
+      "nll": 0.4952,
+      "correct": 299,
+      "total": 360
+    },
+    "0.03": {
+      "accuracy": 0.7694,
+      "nll": 0.6402,
+      "correct": 277,
+      "total": 360
+    },
+    "0.05": {
+      "accuracy": 0.4444,
+      "nll": 2.5884,
+      "correct": 160,
+      "total": 360
+    },
+    "0.1": {
+      "accuracy": 0.3,
+      "nll": 8.7668,
+      "correct": 108,
+      "total": 360
+    }
+  },
+  "rob_acc_003_comparison": {
+    "clean_baseline": 0.2139,
+    "adv_trained": 0.7694,
+    "absolute_gain": 0.5555
+  },
+  "defense_effect_on_explanations": {
+    "intra_pipeline_stability": {
+      "gradcam_cosine_similarity": 0.9593,
+      "ig_cosine_similarity": 0.7903,
+      "num_samples_evaluated": 60
+    }
+  }
+}
