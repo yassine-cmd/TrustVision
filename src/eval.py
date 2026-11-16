@@ -8,6 +8,7 @@ Shared Evaluation Contract:
 - Expected Calibration Error (ECE) and Temperature Scaling
 """
 
+from pathlib import Path
 from typing import Dict, Any, Optional, Tuple, List, Union
 import numpy as np
 import torch
@@ -274,38 +275,129 @@ def _extract_map_batch(
     return arr
 
 
+def load_model_checkpoint(
+    checkpoint_or_model: Union[str, Path, nn.Module],
+    device: Optional[torch.device] = None,
+    num_classes: int = 6,
+) -> nn.Module:
+    """
+    Checkpoint-agnostic loader.
+    Accepts either an already instantiated nn.Module, a path to a .pt file
+    (state_dict or full serialized object), and maps it safely to target device.
+    """
+    if device is None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    if isinstance(checkpoint_or_model, nn.Module):
+        model = checkpoint_or_model
+    elif isinstance(checkpoint_or_model, (str, Path)):
+        ckpt_path = Path(checkpoint_or_model)
+        if not ckpt_path.exists():
+            raise FileNotFoundError(f"Checkpoint file not found: {ckpt_path}")
+        
+        # Local import to prevent circular dependency
+        from src.model import TrustVisionCNN
+        model = TrustVisionCNN(num_classes=num_classes)
+        loaded = torch.load(ckpt_path, map_location=device, weights_only=False)
+        if isinstance(loaded, dict) and "state_dict" in loaded:
+            model.load_state_dict(loaded["state_dict"])
+        elif isinstance(loaded, dict):
+            model.load_state_dict(loaded)
+        elif isinstance(loaded, nn.Module):
+            model = loaded
+        else:
+            raise ValueError(f"Unrecognized checkpoint format at {ckpt_path}")
+    else:
+        raise TypeError(f"Expected nn.Module or path, got {type(checkpoint_or_model)}")
+
+    model.to(device)
+    model.eval()
+    return model
+
+
+def compute_intra_pipeline_stability(
+    maps_stage_a: Union[np.ndarray, torch.Tensor],
+    maps_stage_b: Union[np.ndarray, torch.Tensor],
+    method: str = "cosine",
+) -> float:
+    """
+    Computes intra-pipeline XAI stability: average similarity between explanation maps
+    of the same images before vs after defense (e.g. S2 baseline vs S3 adversarial or S4 EWC).
+    """
+    if isinstance(maps_stage_a, torch.Tensor):
+        maps_stage_a = maps_stage_a.detach().cpu().numpy()
+    if isinstance(maps_stage_b, torch.Tensor):
+        maps_stage_b = maps_stage_b.detach().cpu().numpy()
+
+    a_arr = np.asarray(maps_stage_a)
+    b_arr = np.asarray(maps_stage_b)
+
+    if a_arr.ndim == 4:
+        a_arr = a_arr.mean(axis=1)
+    if b_arr.ndim == 4:
+        b_arr = b_arr.mean(axis=1)
+
+    if a_arr.shape[0] != b_arr.shape[0]:
+        raise ValueError(f"Sample count mismatch: {a_arr.shape[0]} vs {b_arr.shape[0]}")
+
+    n = a_arr.shape[0]
+    sims = [
+        compute_xai_similarity(a_arr[i], b_arr[i], method=method)
+        for i in range(n)
+    ]
+    return float(np.mean(sims))
+
+
+def format_stage_row(stage_name: str, metrics: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Formats a unified dictionary row for the cross-effects comparative table (S0 to S4).
+    """
+    return {
+        "stage": stage_name,
+        "acc": metrics.get("acc", metrics.get("accuracy")),
+        "macro_f1": metrics.get("macro_f1"),
+        "ece": metrics.get("ece"),
+        "nll": metrics.get("nll"),
+        "brier": metrics.get("brier"),
+        "rob_acc_003": metrics.get("rob_acc_003"),
+        "xai_sim": metrics.get("xai_sim"),
+        "intra_xai_stab": metrics.get("intra_xai_stab"),
+        "forgetting": metrics.get("forgetting"),
+    }
+
+
 def evaluate_all(
-    model: nn.Module,
+    model: Union[nn.Module, str, Path],
     dataloader: DataLoader,
     device: Optional[torch.device] = None,
     fgsm_eps: float = 0.03,
     xai_reference_maps: Optional[np.ndarray] = None,
     xai_saliency_maps: Optional[np.ndarray] = None,
     previous_task_acc: Optional[float] = None,
+    intra_stability_reference_maps: Optional[np.ndarray] = None,
 ) -> Dict[str, Any]:
     """
     Unified evaluation function required by the TrustVision repo contract.
     Computes the full classification/calibration suite, robust accuracy at eps=0.03,
-    XAI agreement, and forgetting.
-
-    Args:
-        model: Evaluated PyTorch model.
-        dataloader: Test or evaluation DataLoader.
-        device: Target torch device (CPU or CUDA).
-        fgsm_eps: FGSM perturbation magnitude (default 0.03).
-        xai_reference_maps: Baseline attention/saliency maps, shape (N, H, W) or (N, L, H, W).
-        xai_saliency_maps: Explainer maps to compare, same batch layout as xai_reference_maps.
-        previous_task_acc: Accuracy on the previous task(s) before the current stage.
-            When provided, forgetting = previous_task_acc - current accuracy.
-
-    Returns:
-        Dictionary containing accuracy, macro_f1, confusion_matrix, ece, nll, brier,
-        rob_acc_003, xai_sim, num_samples, forgetting, and the legacy `acc` alias.
+    XAI agreement, and forgetting. Agnostic to checkpoint (.pt path or nn.Module).
     """
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    if (xai_saliency_maps is None) != (xai_reference_maps is None):
+    model = load_model_checkpoint(model, device=device)
+    model.eval()
+
+    # If saliency maps provided without reference, try loading clip_attn_test.npy
+    if xai_saliency_maps is not None and xai_reference_maps is None:
+        ref_path = Path("results/clip_attn_test.npy")
+        if ref_path.exists():
+            try:
+                xai_reference_maps = np.load(str(ref_path))
+            except Exception:
+                xai_reference_maps = None
+
+    if (xai_saliency_maps is None) != (xai_reference_maps is None) and xai_reference_maps is not None:
+        # If user explicitly passed only one and couldn't auto-resolve, require both
         raise ValueError("Provide both xai_saliency_maps and xai_reference_maps, or neither.")
 
     model.eval()
@@ -360,10 +452,18 @@ def evaluate_all(
             for i in range(total_samples)
         ]))
 
+    # Intra-pipeline XAI stability (e.g. baseline vs adversarial or EWC)
+    intra_stab = None
+    if xai_saliency_maps is not None and intra_stability_reference_maps is not None:
+        intra_stab = compute_intra_pipeline_stability(
+            intra_stability_reference_maps, xai_saliency_maps, method="cosine"
+        )
+
     metrics.update({
         "acc": round(clean_acc, 4),
         "rob_acc_003": round(rob_acc, 4),
         "xai_sim": xai_similarity,
+        "intra_xai_stab": intra_stab,
         "num_samples": total_samples,
         "forgetting": (
             None if previous_task_acc is None
