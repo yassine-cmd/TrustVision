@@ -6,7 +6,7 @@ Trains baseline or adversarial CNN models on the canonical NEU-CLS train split.
 import argparse
 import random
 from pathlib import Path
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, Tuple, List
 
 import numpy as np
 import torch
@@ -42,10 +42,15 @@ def train_cnn(
     adv_ratio: float = 0.5,
     random_start: bool = True,
     root_dir: str = "data/NEU-CLS",
+    label_fraction: float = 1.0,
+    task_classes: Optional[List[int]] = None,
+    num_classes: Optional[int] = None,
+    remap_task_labels: bool = False,
 ) -> Tuple[TrustVisionCNN, Dict[str, Any]]:
     """
-    Trains TrustVisionCNN on NEU-CLS train split (1260 images).
-    Supports both standard clean training and adversarial training (mixed FGSM + random start).
+    Trains TrustVisionCNN on NEU-CLS train split (1260 images or subset).
+    Supports standard training, adversarial training, custom label fractions (S1),
+    and task-specific class subsets / heads (S4 continual learning).
 
     Args:
         seed: Random seed (42, 123, 999).
@@ -60,6 +65,10 @@ def train_cnn(
         adv_ratio: Proportion of adversarial examples in the batch.
         random_start: Random initial perturbation to avoid catastrophic overfitting.
         root_dir: Path to NEU-CLS dataset.
+        label_fraction: Proportion of training labels to use (0.01, 0.05, 0.10, 1.0).
+        task_classes: Subset of classes to train on (e.g. [0, 1, 2] for S4 task 1).
+        num_classes: Number of classification head outputs (default: len(task_classes) if task_classes else 6).
+        remap_task_labels: If True, remaps task_classes to 0..len(task_classes)-1.
 
     Returns:
         (trained_model, history_dict)
@@ -68,16 +77,26 @@ def train_cnn(
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    print(f"[Train] Initializing dataloaders for seed={seed}, img_size=96...")
+    if num_classes is None:
+        num_classes = len(task_classes) if task_classes is not None else 6
+
+    print(
+        f"[Train] Initializing dataloaders for seed={seed}, img_size=96, "
+        f"label_fraction={label_fraction}, task_classes={task_classes}, num_classes={num_classes}..."
+    )
     train_loader, cal_loader, test_loader, _ = get_dataloaders(
         root_dir=root_dir,
         batch_size=batch_size,
         seed=seed,
         img_size=96,
+        label_fraction=label_fraction,
+        task_classes=task_classes,
+        remap_task_labels=remap_task_labels,
+        num_classes=num_classes,
         auto_download=True,
     )
 
-    model = TrustVisionCNN(num_classes=6, feature_dim=256, normalize_input=True)
+    model = TrustVisionCNN(num_classes=num_classes, feature_dim=256, normalize_input=True)
     model.to(device)
 
     criterion = nn.CrossEntropyLoss()
@@ -176,7 +195,14 @@ if __name__ == "__main__":
     parser.add_argument("--save-path", type=str, default="checkpoints/cnn_base_seed42.pt")
     parser.add_argument("--adversarial", action="store_true")
     parser.add_argument("--adv-eps", type=float, default=0.03)
+    parser.add_argument("--label-fraction", type=float, default=1.0)
+    parser.add_argument("--task-classes", type=int, nargs="*", default=None)
+    parser.add_argument("--num-classes", type=int, default=None)
     args = parser.parse_args()
+
+    task_classes = args.task_classes
+    if task_classes is not None and len(task_classes) == 0:
+        task_classes = None
 
     train_cnn(
         seed=args.seed,
@@ -186,4 +212,7 @@ if __name__ == "__main__":
         save_path=args.save_path,
         adversarial=args.adversarial,
         adv_eps=args.adv_eps,
+        label_fraction=args.label_fraction,
+        task_classes=task_classes,
+        num_classes=args.num_classes,
     )

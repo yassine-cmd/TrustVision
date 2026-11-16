@@ -274,3 +274,58 @@ def test_gradio_tab3_auditor_contract():
     assert res["integrated_gradients_map"].shape == (96, 96)
     assert res["perturbed_image"].shape == (96, 96, 3)
 
+
+def test_get_dataloaders_member_c_extensions():
+    """Verifies that get_dataloaders accepts label_fraction, task_classes, and num_classes."""
+    from src.data import get_dataloaders
+
+    # 1. Test 5% fraction with task_classes [0, 1, 2]
+    train_loader, cal_loader, test_loader, test_files = get_dataloaders(
+        root_dir="data/NEU-CLS",
+        batch_size=16,
+        seed=42,
+        img_size=96,
+        label_fraction=0.05,
+        task_classes=[0, 1, 2],
+        num_classes=3,
+        auto_download=True,
+    )
+
+    # Ensure all targets in train_loader are strictly in [0, 1, 2]
+    all_targets = []
+    for _, labels in train_loader:
+        all_targets.extend(labels.tolist())
+
+    assert len(all_targets) > 0
+    assert set(all_targets).issubset({0, 1, 2})
+
+
+def test_load_model_checkpoint_autodetect_num_classes(tmp_path):
+    """Verifies that load_model_checkpoint auto-detects 3-class checkpoints from Member C."""
+    # Create and save a 3-class model state_dict
+    model_3cls = TrustVisionCNN(num_classes=3)
+    dummy_ckpt = tmp_path / "simclr_backbone_3cls.pt"
+    torch.save(model_3cls.state_dict(), str(dummy_ckpt))
+
+    loaded_model = load_model_checkpoint(dummy_ckpt, device=torch.device("cpu"))
+    assert loaded_model.num_classes == 3
+    assert loaded_model.fc.out_features == 3
+    dummy_x = torch.rand(2, 3, 96, 96)
+    out = loaded_model(dummy_x)
+    assert out.shape == (2, 3)
+
+
+def test_train_cnn_interface_contract(monkeypatch):
+    """Verifies train_cnn accepts label_fraction, task_classes, num_classes without error."""
+    import inspect
+    from src.train import train_cnn
+
+    sig = inspect.signature(train_cnn)
+    params = sig.parameters
+    assert "label_fraction" in params
+    assert "task_classes" in params
+    assert "num_classes" in params
+    assert params["label_fraction"].default == 1.0
+    assert params["task_classes"].default is None
+    assert params["num_classes"].default is None
+

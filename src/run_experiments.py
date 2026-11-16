@@ -206,16 +206,26 @@ def build_cross_effects_table(
         }
         table_rows.append(row_s0)
 
-    # S1: SimCLR (Member C - scan for checkpoint)
+    # S1: SimCLR (Member C - scan for checkpoint matching PDF naming contracts)
     simclr_candidates = [
+        Path("checkpoints/simclr_backbone_6cls.pt"),
+        Path("checkpoints/simclr_backbone_3cls.pt"),
         Path("checkpoints/simclr_seed42.pt"),
         Path("checkpoints/simclr_linear_probe.pt"),
         Path("checkpoints/simclr_base.pt"),
-    ]
+    ] + sorted(list(Path("checkpoints").glob("simclr*.pt")))
+    seen_simclr = set()
+    simclr_candidates = [p for p in simclr_candidates if not (str(p) in seen_simclr or seen_simclr.add(str(p)))]
     simclr_ckpt = next((p for p in simclr_candidates if p.exists()), None)
     if simclr_ckpt:
         print(f"[Cross-Effects] Found SimCLR checkpoint: {simclr_ckpt}. Evaluating...")
-        metrics_s1 = evaluate_all(simclr_ckpt, test_loader, device=device)
+        model_s1 = load_model_checkpoint(simclr_ckpt, device=device)
+        loader_s1 = test_loader
+        if getattr(model_s1, "num_classes", 6) == 3 or "3cls" in simclr_ckpt.stem:
+            _, _, loader_s1, _ = get_dataloaders(
+                root_dir="data/NEU-CLS", batch_size=32, seed=seed, img_size=96, task_classes=[0, 1, 2]
+            )
+        metrics_s1 = evaluate_all(model_s1, loader_s1, device=device)
         row_s1 = format_stage_row("S1_SimCLR", metrics_s1)
         row_s1["status"] = "COMPLETED"
         table_rows.append(row_s1)
@@ -289,16 +299,28 @@ def build_cross_effects_table(
         row_s3["status"] = "COMPLETED"
         table_rows.append(row_s3)
 
-    # S4: Continual Learning / EWC (Member C - scan for checkpoint)
-    ewc_candidates = [
-        Path("checkpoints/ewc_seed42.pt"),
-        Path("checkpoints/continual_ewc.pt"),
-        Path("checkpoints/ewc_task2.pt"),
-    ]
+    # S4: Continual Learning / EWC (Member C - scan for checkpoint matching PDF naming contracts)
+    ewc_candidates = (
+        sorted(list(Path("checkpoints").glob("ewc_lambda_*.pt")))
+        + [
+            Path("checkpoints/ewc_seed42.pt"),
+            Path("checkpoints/continual_ewc.pt"),
+            Path("checkpoints/ewc_task2.pt"),
+        ]
+        + sorted(list(Path("checkpoints").glob("ewc*.pt")))
+    )
+    seen_ewc = set()
+    ewc_candidates = [p for p in ewc_candidates if not (str(p) in seen_ewc or seen_ewc.add(str(p)))]
     ewc_ckpt = next((p for p in ewc_candidates if p.exists()), None)
     if ewc_ckpt:
         print(f"[Cross-Effects] Found EWC checkpoint: {ewc_ckpt}. Evaluating...")
-        metrics_s4 = evaluate_all(ewc_ckpt, test_loader, device=device)
+        model_s4 = load_model_checkpoint(ewc_ckpt, device=device)
+        loader_s4 = test_loader
+        if getattr(model_s4, "num_classes", 6) == 3 or "3cls" in ewc_ckpt.stem or "task1" in ewc_ckpt.stem:
+            _, _, loader_s4, _ = get_dataloaders(
+                root_dir="data/NEU-CLS", batch_size=32, seed=seed, img_size=96, task_classes=[0, 1, 2]
+            )
+        metrics_s4 = evaluate_all(model_s4, loader_s4, device=device)
         row_s4 = format_stage_row("S4_EWC_Continual", metrics_s4)
         row_s4["status"] = "COMPLETED"
         table_rows.append(row_s4)
