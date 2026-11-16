@@ -69,7 +69,11 @@ class TrustVisionTab3Auditor:
             if image_input.dtype == np.uint8:
                 image_input = Image.fromarray(image_input)
             else:
-                image_input = Image.fromarray((image_input * 255).astype(np.uint8))
+                arr = image_input.astype(np.float32)
+                if arr.max() <= 1.0:
+                    arr = arr * 255.0
+                arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
+                image_input = Image.fromarray(arr)
 
         if isinstance(image_input, Image.Image):
             img_rgb = image_input.convert("RGB")

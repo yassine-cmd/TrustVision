@@ -427,6 +427,7 @@ def train_linear_probe(
     epochs: int = 300,
     lr: float = 0.05,
     weight_decay: float = 1e-4,
+    seed: int = 42,
     checkpoint_path: Optional[str] = "checkpoints/clip_linear_probe.pt",
     device: Optional[torch.device] = None,
 ) -> Dict[str, Any]:
@@ -439,7 +440,8 @@ def train_linear_probe(
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Reproducible probe initialisation (matches the committed notebook artifact)
-    torch.manual_seed(42)
+    torch.manual_seed(seed)
+    np.random.seed(seed)
     probe = LinearProbe(in_features=train_features.shape[1], num_classes=num_classes).to(device)
     optimizer = torch.optim.AdamW(probe.parameters(), lr=lr, weight_decay=weight_decay)
     criterion = nn.CrossEntropyLoss()

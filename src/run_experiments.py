@@ -20,6 +20,7 @@ from src.eval import (
     compute_xai_similarity,
     compute_intra_pipeline_stability,
     format_stage_row,
+    ModelWithTemperature,
 )
 from src.xai_cal_adv import (
     GradCAM,
@@ -98,7 +99,7 @@ def run_stage_s2_calibration(
             "ig_mean_completeness_rel_error": xai_comp["mean_ig_completeness_rel_error"],
         },
         "xai_clip_vit_attention_alignment": {
-            "reference_file": str(clip_attn_file) if clip_attn_file.exists() else None,
+            "reference_file": str(clip_attn_file.as_posix()) if clip_attn_file.exists() else None,
             "mean_cosine_similarity": clip_xai_sim,
         },
     }
@@ -133,7 +134,7 @@ def run_stage_s3_adversarial(
         device=device,
         epsilons=[0.0, 0.01, 0.03, 0.05, 0.10],
         compute_explanation_stability=True,
-        n_xai_samples=60,
+        n_xai_samples=None,
     )
 
     output_s3 = {
@@ -191,13 +192,14 @@ def build_cross_effects_table(
             s0_data = json.load(f)
         s0_probe = s0_data.get("theme4_linear_probe", {})
         s0_cross = s0_data.get("cross_effects_input", {})
+        cal_probe = s0_probe.get("calibrated", {})
         row_s0 = {
             "stage": "S0_CLIP_LinearProbe",
-            "acc": s0_cross.get("clip_linear_probe_acc", 0.9944),
-            "macro_f1": s0_cross.get("clip_linear_probe_macro_f1", 0.9945),
-            "ece": s0_cross.get("clip_linear_probe_ece_calibrated", 0.0056),
-            "nll": 0.0210,
-            "brier": 0.0090,
+            "acc": s0_cross.get("clip_linear_probe_acc", cal_probe.get("accuracy", 0.9944)),
+            "macro_f1": s0_cross.get("clip_linear_probe_macro_f1", cal_probe.get("macro_f1", 0.9945)),
+            "ece": s0_cross.get("clip_linear_probe_ece_calibrated", cal_probe.get("ece", 0.0056)),
+            "nll": cal_probe.get("nll", 0.0159),
+            "brier": cal_probe.get("brier", cal_probe.get("brier_score", 0.0088)),
             "rob_acc_003": s0_cross.get("clip_linear_probe_rob_acc_003", 0.2111),
             "xai_sim": 1.0,  # Self reference
             "intra_xai_stab": None,
@@ -237,15 +239,20 @@ def build_cross_effects_table(
     # S2: Baseline CNN + Calibration (Member B)
     cnn_base_ckpt = Path("checkpoints/cnn_base_seed42.pt")
     if cnn_base_ckpt.exists():
-        print("[Cross-Effects] Evaluating S2 Baseline CNN...")
-        metrics_s2 = evaluate_all(cnn_base_ckpt, test_loader, device=device)
+        print("[Cross-Effects] Evaluating S2 Baseline CNN (Calibrated)...")
+        _, cal_loader, _, _ = get_dataloaders(
+            root_dir="data/NEU-CLS", batch_size=32, seed=seed, img_size=96
+        )
+        model_b = load_model_checkpoint(cnn_base_ckpt, device=device)
+        model_b_calib = ModelWithTemperature(model_b)
+        model_b_calib.set_temperature(cal_loader, device=device)
+        metrics_s2 = evaluate_all(model_b_calib, test_loader, device=device)
         # Check alignment with clip attn
         clip_attn_file = Path("results/clip_attn_test.npy")
         if clip_attn_file.exists():
-            vit_maps = np.load(str(clip_attn_file))
+            vit_maps = np.load(str(clip_attn_file.as_posix()))
             if vit_maps.ndim == 4:
                 vit_maps = vit_maps.mean(axis=1)
-            model_b = load_model_checkpoint(cnn_base_ckpt, device=device)
             explainer = GradCAM(model_b)
             cams = []
             for imgs, _ in test_loader:

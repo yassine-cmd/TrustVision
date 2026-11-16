@@ -242,21 +242,20 @@ class NEUCLSDataset(Dataset):
     def _load_from_disk(self):
         """Scans root_dir for images sorted deterministically by class and filename."""
         self.samples = []
+        valid_exts = {".jpg", ".jpeg", ".bmp", ".png"}
         for class_idx, class_name in enumerate(NEU_CLASSES):
             class_folder = self.root_dir / class_name
             if class_folder.is_dir():
-                image_files = sorted(
-                    list(class_folder.glob("*.jpg"))
-                    + list(class_folder.glob("*.bmp"))
-                    + list(class_folder.glob("*.png"))
-                )
+                image_files = sorted([
+                    p for p in class_folder.iterdir()
+                    if p.is_file() and p.suffix.lower() in valid_exts
+                ])
             else:
                 # Flat root scan using robust matcher
-                all_files = sorted(
-                    list(self.root_dir.glob("*.jpg"))
-                    + list(self.root_dir.glob("*.bmp"))
-                    + list(self.root_dir.glob("*.png"))
-                )
+                all_files = sorted([
+                    p for p in self.root_dir.iterdir()
+                    if p.is_file() and p.suffix.lower() in valid_exts
+                ])
                 image_files = [f for f in all_files if match_neu_class(f) == class_idx]
 
             for img_path in image_files:

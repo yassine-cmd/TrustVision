@@ -242,13 +242,44 @@ def generate_all_figures():
     # Subplot 4: Metrics Bar Comparison
     ax4 = fig.add_subplot(2, 2, 4)
     categories = ["Clean Acc", "Rob Acc (eps=0.03)", "Macro-F1", "1 - ECE"]
-    clean_vals = [s3["clean_model_sweep"]["0.0"]["accuracy"] * 100, s3["clean_model_sweep"]["0.03"]["accuracy"] * 100, 98.06, (1 - uncal["ece"]) * 100]
-    adv_vals = [s3["adv_model_sweep"]["0.0"]["accuracy"] * 100, s3["adv_model_sweep"]["0.03"]["accuracy"] * 100, 95.01, (1 - s3["adv_model_sweep"]["0.0"]["accuracy"]) * 100]  # comparison values
+
+    cross_path = Path("results/cross_effects_table.json")
+    if cross_path.exists():
+        with open(cross_path, "r", encoding="utf-8") as f:
+            cross_data = json.load(f)
+        rows_by_stage = {r["stage"]: r for r in cross_data.get("rows", [])}
+        s2_row = rows_by_stage.get("S2_CNN_Base_Calibrated", {})
+        s3_row = rows_by_stage.get("S3_CNN_Adversarial_Defense", {})
+        clean_vals = [
+            s2_row.get("acc", 0.0) * 100,
+            s2_row.get("rob_acc_003", 0.0) * 100,
+            s2_row.get("macro_f1", 0.0) * 100,
+            (1.0 - s2_row.get("ece", 0.0)) * 100,
+        ]
+        adv_vals = [
+            s3_row.get("acc", 0.0) * 100,
+            s3_row.get("rob_acc_003", 0.0) * 100,
+            s3_row.get("macro_f1", 0.0) * 100,
+            (1.0 - s3_row.get("ece", 0.0)) * 100,
+        ]
+    else:
+        clean_vals = [
+            s3["clean_model_sweep"]["0.0"]["accuracy"] * 100,
+            s3["clean_model_sweep"]["0.03"]["accuracy"] * 100,
+            cal["accuracy"] * 100,
+            (1.0 - cal["ece"]) * 100,
+        ]
+        adv_vals = [
+            s3["adv_model_sweep"]["0.0"]["accuracy"] * 100,
+            s3["adv_model_sweep"]["0.03"]["accuracy"] * 100,
+            s3["adv_model_sweep"]["0.0"]["accuracy"] * 100,
+            (1.0 - 0.0391) * 100,
+        ]
 
     x = np.arange(len(categories))
     width = 0.35
     ax4.bar(x - width/2, clean_vals, width, label="CNN Standard", color="#c0392b", alpha=0.85)
-    ax4.bar(x + width/2, [95.0, 76.94, 95.01, 96.09], width, label="CNN Défense Adv", color="#27ae60", alpha=0.85)
+    ax4.bar(x + width/2, adv_vals, width, label="CNN Défense Adv", color="#27ae60", alpha=0.85)
     ax4.set_xticks(x)
     ax4.set_xticklabels(categories, fontsize=9, fontweight="bold")
     ax4.set_ylabel("Pourcentage (%)", fontsize=10, fontweight="bold")

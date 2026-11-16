@@ -4,7 +4,7 @@
   "checkpoint": "checkpoints/cnn_base_seed42.pt",
   "seed": 42,
   "temperature_scaling": {
-    "optimal_temperature_T": 0.9279,
+    "optimal_temperature_T": 0.9276,
     "argmax_invariant": true,
     "uncalibrated_test_metrics": {
       "accuracy": 0.9806,
@@ -36,7 +36,7 @@
           0.0,
           0.5844545364379883,
           0.6371577978134155,
-          0.7497409582138062,
+          0.7497410774230957,
           0.8594744205474854,
           0.9909619092941284
         ],
@@ -82,11 +82,11 @@
           0.0,
           0.0,
           0.0,
-          0.5780408978462219,
-          0.6325899362564087,
-          0.7632533311843872,
-          0.8624825477600098,
-          0.9924229979515076
+          0.5780713558197021,
+          0.6326515674591064,
+          0.7633331418037415,
+          0.8625619411468506,
+          0.9924321174621582
         ],
         "counts": [
           0,
@@ -107,12 +107,12 @@
   },
   "xai_methods_comparison": {
     "num_compared": 120,
-    "gradcam_vs_ig_mean_cosine": 0.7835,
-    "gradcam_vs_ig_std_cosine": 0.0959,
-    "ig_mean_completeness_rel_error": 0.0356
+    "gradcam_vs_ig_mean_cosine": 0.7843,
+    "gradcam_vs_ig_std_cosine": 0.0955,
+    "ig_mean_completeness_rel_error": 0.0174
   },
   "xai_clip_vit_attention_alignment": {
-    "reference_file": "results\\clip_attn_test.npy",
+    "reference_file": "results/clip_attn_test.npy",
     "mean_cosine_similarity": 0.7663
   }
 }

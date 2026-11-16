@@ -161,31 +161,34 @@ def integrated_gradients(
     elif isinstance(target_classes, list):
         target_classes = torch.tensor(target_classes, device=device)
 
-    # Accumulate gradients along the interpolation path
+    # Accumulate gradients along the interpolation path using trapezoidal rule
     total_gradients = torch.zeros_like(images)
     diff = images - baseline
 
-    for alpha in np.linspace(0.0, 1.0, steps + 1)[1:]:
+    alphas = np.linspace(0.0, 1.0, steps + 1)
+    weights = [0.5] + [1.0] * (steps - 1) + [0.5]
+
+    for alpha, weight in zip(alphas, weights):
         interpolated = baseline + alpha * diff
         interpolated.requires_grad_(True)
         model.zero_grad()
 
         logits = model(interpolated)
-        score = sum(logits[i, target_classes[i]] for i in range(batch_size))
+        score = logits.gather(1, target_classes.view(-1, 1)).sum()
         score.backward()
 
-        total_gradients += interpolated.grad.detach()
+        total_gradients += weight * interpolated.grad.detach()
 
-    # Average gradient * (input - baseline)
+    # Average gradient * (input - baseline) via trapezoidal rule
     avg_gradients = total_gradients / steps
     ig_attributions = diff * avg_gradients
 
     # Completeness verification: sum(IG) should approximate F(x) - F(x0)
     ig_sum_per_sample = ig_attributions.view(batch_size, -1).sum(dim=1)
-    target_diff = torch.tensor([
-        (target_logits[i, target_classes[i]] - baseline_logits[i, target_classes[i]]).item()
-        for i in range(batch_size)
-    ], device=device)
+    target_diff = (
+        target_logits.gather(1, target_classes.view(-1, 1)).squeeze(1)
+        - baseline_logits.gather(1, target_classes.view(-1, 1)).squeeze(1)
+    )
 
     abs_errors = torch.abs(ig_sum_per_sample - target_diff)
     denom = torch.abs(target_diff) + 1e-6
@@ -464,7 +467,7 @@ def compare_clean_vs_adversarial(
     device: torch.device,
     epsilons: List[float] = [0.0, 0.01, 0.03, 0.05, 0.10],
     compute_explanation_stability: bool = True,
-    n_xai_samples: int = 60,
+    n_xai_samples: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
     Compares clean baseline CNN vs defensively trained CNN:
@@ -507,22 +510,29 @@ def compare_clean_vs_adversarial(
             all_ig_adv.append(ig_adv)
             collected += bsz
 
-            if collected >= n_xai_samples:
+            if n_xai_samples is not None and collected >= n_xai_samples:
                 break
 
         clean_gradcam.remove_hooks()
         adv_gradcam.remove_hooks()
 
-        cam_clean_arr = np.concatenate(all_cam_clean, axis=0)[:n_xai_samples]
-        cam_adv_arr = np.concatenate(all_cam_adv, axis=0)[:n_xai_samples]
-        ig_clean_arr = np.concatenate(all_ig_clean, axis=0)[:n_xai_samples]
-        ig_adv_arr = np.concatenate(all_ig_adv, axis=0)[:n_xai_samples]
+        cam_clean_arr = np.concatenate(all_cam_clean, axis=0)
+        cam_adv_arr = np.concatenate(all_cam_adv, axis=0)
+        ig_clean_arr = np.concatenate(all_ig_clean, axis=0)
+        ig_adv_arr = np.concatenate(all_ig_adv, axis=0)
 
+        if n_xai_samples is not None:
+            cam_clean_arr = cam_clean_arr[:n_xai_samples]
+            cam_adv_arr = cam_adv_arr[:n_xai_samples]
+            ig_clean_arr = ig_clean_arr[:n_xai_samples]
+            ig_adv_arr = ig_adv_arr[:n_xai_samples]
+
+        actual_n = len(cam_clean_arr)
         gradcam_stability = compute_intra_pipeline_stability(cam_clean_arr, cam_adv_arr, method="cosine")
         ig_stability = compute_intra_pipeline_stability(ig_clean_arr, ig_adv_arr, method="cosine")
 
         xai_stability = {
-            "n_samples": n_xai_samples,
+            "n_samples": actual_n,
             "gradcam_stability_cosine": round(gradcam_stability, 4),
             "ig_stability_cosine": round(ig_stability, 4),
             "gradcam_sample_clean": cam_clean_arr[:4].tolist(),

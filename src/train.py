@@ -103,7 +103,7 @@ def train_cnn(
             labels = labels.to(device)
 
             if adversarial:
-                # Fast Adversarial Training with random start
+                # Fast Adversarial Training with random start (Wong et al., ICLR 2020)
                 bsz = images.size(0)
                 n_adv = int(bsz * adv_ratio)
 
@@ -113,7 +113,11 @@ def train_cnn(
                     target_imgs = images[:n_adv]
                     target_lbls = labels[:n_adv]
 
-                    # Random start perturbation inside [-adv_eps, adv_eps]
+                    # 1. Switch to eval mode for perturbation generation:
+                    # Prevents BatchNorm running stats drift and disables stochastic Dropout during attack
+                    model.eval()
+
+                    # 2. Random start perturbation inside [-adv_eps, adv_eps]
                     if random_start:
                         alpha = adv_eps
                         delta = torch.empty_like(target_imgs).uniform_(-alpha, alpha)
@@ -121,7 +125,15 @@ def train_cnn(
                     else:
                         adv_init = target_imgs
 
+                    # 3. FGSM attack step
                     adv_imgs = fgsm_attack(model, adv_init, target_lbls, eps=adv_eps)
+
+                    # 4. Strict projection back onto L_inf ball [target_imgs - adv_eps, target_imgs + adv_eps]
+                    adv_imgs = torch.max(torch.min(adv_imgs, target_imgs + adv_eps), target_imgs - adv_eps)
+                    adv_imgs = torch.clamp(adv_imgs, 0.0, 1.0)
+
+                    # 5. Restore train mode for the model parameter update
+                    model.train()
 
                     if len(clean_imgs) > 0:
                         batch_imgs = torch.cat([clean_imgs, adv_imgs], dim=0)

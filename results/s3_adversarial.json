@@ -25,13 +25,13 @@
     },
     "0.03": {
       "accuracy": 0.2139,
-      "nll": 10.2307,
+      "nll": 10.2306,
       "correct": 77,
       "total": 360
     },
     "0.05": {
       "accuracy": 0.1861,
-      "nll": 17.648,
+      "nll": 17.6479,
       "correct": 67,
       "total": 360
     },
@@ -44,46 +44,46 @@
   },
   "adv_model_sweep": {
     "0.0": {
-      "accuracy": 0.95,
-      "nll": 0.1475,
-      "correct": 342,
+      "accuracy": 0.9389,
+      "nll": 0.1704,
+      "correct": 338,
       "total": 360
     },
     "0.01": {
-      "accuracy": 0.8306,
-      "nll": 0.4952,
-      "correct": 299,
+      "accuracy": 0.8583,
+      "nll": 0.4216,
+      "correct": 309,
       "total": 360
     },
     "0.03": {
-      "accuracy": 0.7694,
-      "nll": 0.6402,
-      "correct": 277,
+      "accuracy": 0.7611,
+      "nll": 0.6823,
+      "correct": 274,
       "total": 360
     },
     "0.05": {
-      "accuracy": 0.4444,
-      "nll": 2.5884,
-      "correct": 160,
+      "accuracy": 0.4917,
+      "nll": 1.8803,
+      "correct": 177,
       "total": 360
     },
     "0.1": {
-      "accuracy": 0.3,
-      "nll": 8.7668,
-      "correct": 108,
+      "accuracy": 0.3139,
+      "nll": 4.8866,
+      "correct": 113,
       "total": 360
     }
   },
   "rob_acc_003_comparison": {
     "clean_baseline": 0.2139,
-    "adv_trained": 0.7694,
-    "absolute_gain": 0.5555
+    "adv_trained": 0.7611,
+    "absolute_gain": 0.5472
   },
   "defense_effect_on_explanations": {
     "intra_pipeline_stability": {
-      "gradcam_cosine_similarity": 0.9593,
-      "ig_cosine_similarity": 0.7903,
-      "num_samples_evaluated": 60
+      "gradcam_cosine_similarity": 0.909,
+      "ig_cosine_similarity": 0.8025,
+      "num_samples_evaluated": 360
     }
   }
 }

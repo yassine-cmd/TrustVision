@@ -5,87 +5,53 @@ Module **IA Avancée** · ENSA Fès.
 
 ---
 
-## Architecture de l'équipe et lots de travail
+## Lots de Travail
 
-- **Membre A** : Étape S0 — Vision Transformers, VLM (CLIP Zero-Shot vs Calibrated Linear Probe), attention mécanistique (`notebooks/exp_A.ipynb`, `src/clip_attn.py`).
-- **Membre B (ce lot)** : Boîte à outils d'audit de confiance appliquée à tous les checkpoints (`src/eval.py`, `src/xai_cal_adv.py`, `src/gradio_tab3.py`, `notebooks/exp_B.ipynb`).
-  - **Thème 9** : IA explicable et fiable (Grad-CAM, Integrated Gradients, Temperature Scaling, ECE Bootstrap).
-  - **Thème 11** : ML adversarial (Attaques FGSM, entraînement adversarial avec random start, robustesse, stabilité intra-pipeline des explications).
-- **Membre C** : Étape S1 — Contrastive Learning (SimCLR) et Étape S4 — Continual Learning & Catastrophic Forgetting (EWC).
+- **Membre A (Étape S0)** : Vision Transformers, CLIP Zero-Shot & Linear Probe calibrée, attention mécanistique (`notebooks/exp_A.ipynb`, `src/clip_attn.py`).
+- **Membre B (Étapes S2 & S3)** : Boîte à outils d'audit de confiance (`src/eval.py`, `src/xai_cal_adv.py`, `src/gradio_tab3.py`, `notebooks/exp_B.ipynb`).
+  - *Thème 9* : Calibration (Temperature Scaling, ECE Bootstrap) & Explicabilité (Grad-CAM, Integrated Gradients).
+  - *Thème 11* : Défense adversariale (FGSM, projection $L_\infty$, stabilité intra-pipeline des explications).
+- **Membre C (Étapes S1 & S4)** : Contrastive Learning (SimCLR) & Continual Learning (EWC).
 
 ---
 
-## Lot Membre B : Livrables & Résultats Clés
+## Matrice Synthétique d'Effets Croisés (S0 à S4)
 
-### 1. Checkpoints
-- `checkpoints/cnn_base_seed42.pt` : CNN baseline (96x96, 4 blocs Conv, 256-d features) entraîné sur le split train (1 260 images).
-  - **Clean Test Acc** : **98.06%**
-  - **ECE (non calibré)** : **0.0129** (IC 95%: [0.0094, 0.0285])
-  - **Robust Acc (FGSM eps=0.03)** : **21.39%**
-- `checkpoints/cnn_adv_seed42.pt` : CNN défendu par entraînement adversarial (mélange propre + FGSM eps=0.03 + random start uniforme).
-  - **Clean Test Acc** : **95.00%** (faible compromis de -3.06%)
-  - **Robust Acc (FGSM eps=0.03)** : **76.94%** (**gain net de +55.55%**)
+Les métriques consolidées sont exportées dans [`results/cross_effects_table.json`](results/cross_effects_table.json) :
 
-### 2. Audit de Confiance (Thème 9 & 11)
-- **Calibration (Temperature Scaling)** :
-  - $T^* = 0.9279$ optimisé par LBFGS uniquement sur le split de calibration (180 images).
-  - Préservation stricte de l'argmax vérifiée (`argmax_invariant: True`, exactitude test strictement préservée à 98.06%).
-  - Réduction de l'ECE à **0.0121** (IC 95%: [0.0079, 0.0263]).
-- **Explicabilité (XAI)** :
-  - Accord Grad-CAM vs Integrated Gradients : similarité cosinus de **0.7835 ± 0.0911**.
-  - Erreur relative de complétude de l'IG : **0.0019** (complétude vérifiée).
-  - Accord Grad-CAM avec l'attention ViT CLIP (S0 `results/clip_attn_test.npy`) : similarité cosinus de **0.7663**.
-  - Stabilité intra-pipeline (Grad-CAM propre vs adversarial) : **0.8336** (maintien d'explications stables malgré la perturbation et la défense).
-
-### 3. Visualisations et Figures (`results/figures/`)
-Toutes les visualisations haute résolution (300 DPI) sont sauvegardées dans `results/figures/` :
-- `results/figures/trustvision_member_b_dashboard.png` : Poster récapitulatif 4 panneaux.
-- `results/figures/fgsm_robustness_curve.png` : Courbe de robustesse $\varepsilon \in [0, 0.10]$ (Standard vs Défense).
-- `results/figures/calibration_reliability_diagrams.png` : Reliability Diagrams avant et après Temperature Scaling.
-- `results/figures/xai_gradcam_vs_ig.png` : Comparatif qualitatif (Image d'origine, Grad-CAM, Integrated Gradients).
-- `results/figures/intra_pipeline_xai_stability.png` : Stabilité visuelle des cartes Grad-CAM avant vs après défense.
-
-![Dashboard Synthétique](results/figures/trustvision_member_b_dashboard.png)
-
-### 4. Matrice Comparatrice d'Effets Croisés (S0 à S4)
-Résultats consolidés dans `results/cross_effects_table.json` :
-
-| Étape | Modèle / Checkpoint | Acc Clean | Macro-F1 | ECE | Rob Acc ($\varepsilon=0.03$) | XAI Sim (vs ViT) | Stabilité Intra XAI | Statut |
+| Étape | Modèle / Checkpoint | Acc Clean | Macro-F1 | ECE Calibré | Rob Acc ($\varepsilon=0.03$) | XAI Sim (vs ViT) | Stabilité Intra XAI | Statut |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **S0** | CLIP Linear Probe | 99.44% | 0.9945 | 0.0056 | 21.11% | 1.000 | - | COMPLETED |
 | **S1** | SimCLR Linear Probe | - | - | - | - | - | - | *En attente Membre C* |
-| **S2** | Baseline CNN (Calibré) | 98.06% | 0.9806 | 0.0121 | 21.39% | 0.7663 | - | COMPLETED |
-| **S3** | CNN Défense Adversariale | 95.00% | 0.9501 | 0.0391 | 76.94% | - | 0.8336 | COMPLETED |
+| **S2** | Baseline CNN (Calibré) | 98.06% | 0.9806 | 0.0121 | 21.11% | 0.7663 | - | COMPLETED |
+| **S3** | CNN Défense Adversariale | 93.89% | 0.9392 | 0.0379 | 76.11% | - | 0.9090 | COMPLETED |
 | **S4** | Continual EWC | - | - | - | - | - | - | *En attente Membre C* |
+
+Les rapports détaillés et visualisations haute résolution sont disponibles dans [`results/`](results/) et [`results/figures/`](results/figures/).
 
 ---
 
-## Reproduction & Commandes
+## Reproduction Rapide
 
-### 1. Exécution des tests unitaires
+### 1. Tests Unitaires
 ```bash
-pytest tests/test_exp_b.py -v
+pytest tests/ -v
 ```
 
-### 2. Entraînement des modèles
+### 2. Entraînement & Expériences
 ```bash
-# CNN Baseline
+# Entraînement CNN standard & adversarial
 python -m src.train --seed 42 --epochs 15 --save-path checkpoints/cnn_base_seed42.pt
-
-# CNN Adversarial
 python -m src.train --seed 42 --epochs 15 --adversarial --adv-eps 0.03 --save-path checkpoints/cnn_adv_seed42.pt
-```
 
-### 3. Exécution complète des expériences et génération des JSON
-```bash
+# Exécution complète de l'audit et génération des figures
 python -m src.run_experiments
+python -m src.generate_figures
 ```
 
-### 4. Inférence Interactive Rapide pour Gradio Tab 3 (< 0.5s)
+### 3. Inférence Interactive (Gradio Tab 3)
 ```python
 from src.gradio_tab3 import TrustVisionTab3Auditor
 auditor = TrustVisionTab3Auditor()
 result = auditor.audit(image_pil, temperature=1.2, epsilon=0.03)
-# result contient : predicted_class, confidence, perturbed_image, grad_cam_map, integrated_gradients_map, latency_ms
 ```
-
