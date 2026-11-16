@@ -283,9 +283,24 @@ def get_dataloaders(
     num_workers: int = 0,
     config_path: Optional[str] = None,
     auto_download: bool = True,
+    remap_task_labels: bool = False,
+    num_classes: Optional[int] = None,
 ) -> Tuple[DataLoader, DataLoader, DataLoader, List[str]]:
     """
     Creates train, cal, and test DataLoaders strictly respecting configs/splits.json.
+
+    Args:
+        root_dir: Dataset root directory.
+        batch_size: Batch size for loaders.
+        seed: Random seed in splits.json (42, 123, 999).
+        img_size: Spatial image resolution (e.g. 96 for CNN).
+        label_fraction: Fraction of train labels to use (0.01, 0.05, 0.10, 1.0).
+        task_classes: List of class indices to filter for (e.g. [0, 1, 2] for S4 task 1).
+        num_workers: Number of DataLoader subprocesses.
+        config_path: Path to splits.json.
+        auto_download: Whether to auto-download dataset if absent.
+        remap_task_labels: If True, remaps task_classes to 0..len(task_classes)-1.
+        num_classes: Optional number of classes (accepted for interface compatibility).
 
     Returns:
         (train_loader, cal_loader, test_loader, test_file_paths)
@@ -339,6 +354,25 @@ def get_dataloaders(
     train_subset = Subset(full_dataset, train_indices)
     cal_subset = Subset(full_dataset, cal_indices)
     test_subset = Subset(full_dataset, test_indices)
+
+    if remap_task_labels and task_classes is not None:
+        mapping = {cls_idx: i for i, cls_idx in enumerate(task_classes)}
+
+        class RemappedSubset(Dataset):
+            def __init__(self, subset: Subset, class_mapping: Dict[int, int]):
+                self.subset = subset
+                self.class_mapping = class_mapping
+
+            def __len__(self) -> int:
+                return len(self.subset)
+
+            def __getitem__(self, idx: int) -> Tuple[torch.Tensor, int]:
+                img, label = self.subset[idx]
+                return img, self.class_mapping.get(label, label)
+
+        train_subset = RemappedSubset(train_subset, mapping)
+        cal_subset = RemappedSubset(cal_subset, mapping)
+        test_subset = RemappedSubset(test_subset, mapping)
 
     test_files = [full_dataset.samples[i][2] for i in test_indices]
 

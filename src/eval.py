@@ -297,12 +297,17 @@ def load_model_checkpoint(
         
         # Local import to prevent circular dependency
         from src.model import TrustVisionCNN
-        model = TrustVisionCNN(num_classes=num_classes)
         loaded = torch.load(ckpt_path, map_location=device, weights_only=False)
-        if isinstance(loaded, dict) and "state_dict" in loaded:
-            model.load_state_dict(loaded["state_dict"])
-        elif isinstance(loaded, dict):
-            model.load_state_dict(loaded)
+        if isinstance(loaded, dict):
+            state_dict = loaded.get("state_dict", loaded)
+            if "fc.weight" in state_dict:
+                num_classes = state_dict["fc.weight"].shape[0]
+            elif "fc.bias" in state_dict:
+                num_classes = state_dict["fc.bias"].shape[0]
+
+            model = TrustVisionCNN(num_classes=num_classes)
+            has_fc = "fc.weight" in state_dict or "fc.bias" in state_dict
+            model.load_state_dict(state_dict, strict=has_fc)
         elif isinstance(loaded, nn.Module):
             model = loaded
         else:
