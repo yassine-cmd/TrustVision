@@ -37,7 +37,17 @@ Module **IA Avancée** · ENSA Fès.
   - Accord Grad-CAM avec l'attention ViT CLIP (S0 `results/clip_attn_test.npy`) : similarité cosinus de **0.7663**.
   - Stabilité intra-pipeline (Grad-CAM propre vs adversarial) : **0.8336** (maintien d'explications stables malgré la perturbation et la défense).
 
-### 3. Matrice Comparatrice d'Effets Croisés (S0 à S4)
+### 3. Visualisations et Figures (`results/figures/`)
+Toutes les visualisations haute résolution (300 DPI) sont sauvegardées dans `results/figures/` :
+- `results/figures/trustvision_member_b_dashboard.png` : Poster récapitulatif 4 panneaux.
+- `results/figures/fgsm_robustness_curve.png` : Courbe de robustesse $\varepsilon \in [0, 0.10]$ (Standard vs Défense).
+- `results/figures/calibration_reliability_diagrams.png` : Reliability Diagrams avant et après Temperature Scaling.
+- `results/figures/xai_gradcam_vs_ig.png` : Comparatif qualitatif (Image d'origine, Grad-CAM, Integrated Gradients).
+- `results/figures/intra_pipeline_xai_stability.png` : Stabilité visuelle des cartes Grad-CAM avant vs après défense.
+
+![Dashboard Synthétique](results/figures/trustvision_member_b_dashboard.png)
+
+### 4. Matrice Comparatrice d'Effets Croisés (S0 à S4)
 Résultats consolidés dans `results/cross_effects_table.json` :
 
 | Étape | Modèle / Checkpoint | Acc Clean | Macro-F1 | ECE | Rob Acc ($\varepsilon=0.03$) | XAI Sim (vs ViT) | Stabilité Intra XAI | Statut |
