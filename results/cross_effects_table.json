@@ -24,7 +24,7 @@
       "nll": 0.0159,
       "brier": 0.0088,
       "rob_acc_003": 0.2111,
-      "xai_sim": 1.0,
+      "xai_sim": null,
       "intra_xai_stab": null,
       "forgetting": null,
       "status": "COMPLETED"

@@ -201,7 +201,7 @@ def build_cross_effects_table(
             "nll": cal_probe.get("nll", 0.0159),
             "brier": cal_probe.get("brier", cal_probe.get("brier_score", 0.0088)),
             "rob_acc_003": s0_cross.get("clip_linear_probe_rob_acc_003", 0.2111),
-            "xai_sim": 1.0,  # Self reference
+            "xai_sim": None,  # S0 is the ViT reference: no Grad-CAM comparison
             "intra_xai_stab": None,
             "forgetting": None,
             "status": "COMPLETED",

@@ -19,13 +19,15 @@ Module **IA Avancée** · ENSA Fès.
 
 Les métriques consolidées sont exportées dans [`results/cross_effects_table.json`](results/cross_effects_table.json) :
 
-| Étape | Modèle / Checkpoint | Acc Clean | Macro-F1 | ECE Calibré | Rob Acc ($\varepsilon=0.03$) | XAI Sim (vs ViT) | Stabilité Intra XAI | Statut |
+| Étape | Modèle / Checkpoint | Acc Clean | Macro-F1 | ECE | Rob Acc ($\varepsilon=0.03$) | XAI Sim (vs ViT) | Stabilité Intra XAI | Statut |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **S0** | CLIP Linear Probe | 99.44% | 0.9945 | 0.0056 | 21.11% | 1.000 | - | COMPLETED |
+| **S0** | CLIP Linear Probe | 99.44% | 0.9945 | 0.0056 | 21.11% | — (référence) | - | COMPLETED |
 | **S1** | SimCLR Linear Probe | - | - | - | - | - | - | *En attente Membre C* |
 | **S2** | Baseline CNN (Calibré) | 98.06% | 0.9806 | 0.0121 | 21.11% | 0.7663 | - | COMPLETED |
 | **S3** | CNN Défense Adversariale | 93.89% | 0.9392 | 0.0379 | 76.11% | - | 0.9090 | COMPLETED |
 | **S4** | Continual EWC | - | - | - | - | - | - | *En attente Membre C* |
+
+*Note : les ECE S0 et S2 sont post-calibration (T = 0.4184 et 0.9276). La valeur S3 du tableau (0.0379) correspond au modèle brut ; après temperature scaling (T = 0.6772), l'ECE descend à **0.0306**. La colonne `XAI Sim` ne contient qu'une mesure réelle (S2 : Grad-CAM vs attention ViT) — S0 sert de référence et n'est donc pas comparée à elle-même.*
 
 Les rapports détaillés et visualisations haute résolution sont disponibles dans [`results/`](results/) et [`results/figures/`](results/figures/).
 
