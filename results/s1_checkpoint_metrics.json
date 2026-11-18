@@ -1,0 +1,44 @@
+{
+  "stage": "S1_CHECKPOINT_METRICS",
+  "seed": 42,
+  "protocol": "Checkpoints exported from the official SimCLR backbone (probes) or retrained with the official scratch recipe (15 epochs, batch 32). Every checkpoint is re-evaluated on the shared test split; the official JSON accuracy is kept untouched as the reference.",
+  "checkpoints": {
+    "1pct": {
+      "probe": {
+        "path": "checkpoints/s1_simclr_probe_1pct.pt",
+        "acc": 0.7306,
+        "official_json_acc": 0.7306
+      },
+      "scratch": {
+        "path": "checkpoints/s1_scratch_1pct.pt",
+        "acc": 0.2472,
+        "official_json_acc": 0.2472
+      }
+    },
+    "5pct": {
+      "probe": {
+        "path": "checkpoints/s1_simclr_probe_5pct.pt",
+        "acc": 0.8833,
+        "official_json_acc": 0.8833
+      },
+      "scratch": {
+        "path": "checkpoints/s1_scratch_5pct.pt",
+        "acc": 0.3111,
+        "official_json_acc": 0.3111
+      }
+    },
+    "10pct": {
+      "probe": {
+        "path": "checkpoints/s1_simclr_probe_10pct.pt",
+        "acc": 0.9056,
+        "official_json_acc": 0.9056
+      },
+      "scratch": {
+        "path": "checkpoints/s1_scratch_10pct.pt",
+        "acc": 0.875,
+        "official_json_acc": 0.875
+      }
+    }
+  },
+  "all_checks_passed": true
+}

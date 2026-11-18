@@ -1,0 +1,13 @@
+{
+  "protocol": "Grad-CAM (96x96) vs CLIP ViT CLS-to-patch attention averaged over the 12 layers (results/clip_attn_test.npy), cosine similarity, mean over the 360 shared test images. Same protocol as the S2 value 0.7663.",
+  "reference_file": "results/clip_attn_test.npy",
+  "checkpoints": {
+    "S1_SimCLR": "checkpoints/s1_simclr_probe_100pct.pt",
+    "S4_EWC_Continual": "checkpoints/ewc_plus_replay_seed42.pt"
+  },
+  "values": {
+    "S1_SimCLR": 0.7118,
+    "S4_EWC_Continual": 0.7961
+  },
+  "s2_reference": 0.7663
+}

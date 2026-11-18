@@ -31,16 +31,16 @@
     },
     {
       "stage": "S1_SimCLR",
-      "acc": null,
-      "macro_f1": null,
-      "ece": null,
-      "nll": null,
-      "brier": null,
-      "rob_acc_003": null,
-      "xai_sim": null,
+      "acc": 0.9722,
+      "macro_f1": 0.9722,
+      "ece": 0.0087,
+      "nll": 0.0785,
+      "brier": 0.043,
+      "rob_acc_003": 0.15,
+      "xai_sim": 0.7118,
       "intra_xai_stab": null,
       "forgetting": null,
-      "status": "PENDING_MEMBER_C"
+      "status": "COMPLETED"
     },
     {
       "stage": "S2_CNN_Base_Calibrated",
@@ -70,16 +70,50 @@
     },
     {
       "stage": "S4_EWC_Continual",
-      "acc": null,
-      "macro_f1": null,
-      "ece": null,
-      "nll": null,
-      "brier": null,
-      "rob_acc_003": null,
-      "xai_sim": null,
-      "intra_xai_stab": null,
-      "forgetting": null,
-      "status": "PENDING_MEMBER_C"
+      "acc": 0.8639,
+      "macro_f1": 0.8633,
+      "ece": 0.0765,
+      "nll": 0.4178,
+      "brier": 0.221,
+      "rob_acc_003": 0.15,
+      "xai_sim": 0.7961,
+      "intra_xai_stab": 0.9831,
+      "forgetting": 0.0722,
+      "status": "COMPLETED",
+      "calibration_note": "Fitted T=0.001 rejected: calibration NLL 1.1885 vs 0.3914 at T=1; raw probabilities reported."
     }
-  ]
+  ],
+  "member_c": {
+    "s1_best_probe_100pct": {
+      "acc": 0.9722,
+      "macro_f1": 0.9722,
+      "ece_calibrated": 0.0087
+    },
+    "s1_main_model": {
+      "source": "Supervised CNN from scratch (100% labels)",
+      "checkpoint": "checkpoints/s1_main_model.pt",
+      "acc": 0.9778,
+      "macro_f1": 0.9778,
+      "ece_calibrated": 0.0122
+    },
+    "s4_best_ewc": {
+      "strategy": "ewc_replay",
+      "lambda": 10.0,
+      "acc": 0.8639,
+      "old_acc": 0.9278,
+      "new_acc": 0.8,
+      "forgetting": 0.0722,
+      "ece": 0.0765,
+      "ece_fitted_temperature": 0.0765,
+      "temperature": 1.0,
+      "temperature_fitted": 0.001,
+      "calibration_accepted": false
+    },
+    "xai_sim": {
+      "S1_SimCLR": 0.7118,
+      "S4_EWC_Continual": 0.7961,
+      "protocol": "Grad-CAM (96x96) vs CLIP ViT CLS-to-patch attention averaged over the 12 layers (results/clip_attn_test.npy), cosine similarity, mean over the 360 shared test images. Same protocol as the S2 value 0.7663."
+    }
+  },
+  "calibration_protocol": "Temperature scaling fitted on the 10% calibration split; T is restricted to [0.1, 10] and a fit is rejected (T=1 fallback) when it is out of range or does not reduce the calibration NLL (no-harm guard in src/member_c_utils.py)."
 }
