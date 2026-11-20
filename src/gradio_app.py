@@ -6,9 +6,9 @@ for automated hot-rolled steel strip surface defect inspection (NEU-CLS).
 
 Integrates the full research & deployment pipeline (S0 through S5):
 * 01 · Détection Zero-Shot & Attention (VLM) : OpenAI CLIP ViT-B/32 semantic prompt scoring & multi-layer attention.
-* 02 · Efficacité d'Annotation SimCLR (SSL) : Self-supervised contrastive learning vs scratch CNN under 1-100% labels.
+* 02 · Efficacité d'Annotation (SimCLR) : Self-supervised contrastive learning vs scratch CNN under 1-100% labels.
 * 03 · Audit de Confiance & Défense FGSM : Bayesian temperature scaling, adversarial stress testing & XAI (Grad-CAM, IG).
-* 04 · Extension Continue EWC & Replay : Elastic Weight Consolidation synaptic preservation on single-head expansion.
+* 04 · Extension Continue & Replay (EWC) : Elastic Weight Consolidation synaptic preservation on single-head expansion.
 * 05 · Jumeau Numérique 3D (Ligne 04) : Real-time Three.js WebGL digital twin with calibrated pneumatic sorting.
 """
 
@@ -60,7 +60,7 @@ SAMPLE_IMAGES = [
 
 
 # ---------------------------------------------------------------------------
-# Visual & Theme System
+# Visual & Theme System (Industrial Cyber-Dark)
 # ---------------------------------------------------------------------------
 
 CUSTOM_CSS = """
@@ -87,64 +87,61 @@ body, .gradio-container {
 
 /* Header Banner */
 .tv-header {
-  background: linear-gradient(180deg, #131d31 0%, #0d1424 100%);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  border-radius: 12px;
-  padding: 24px 28px;
-  margin-bottom: 22px;
+  background: #111827;
+  border: 1px solid #1f293d;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 18px;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45);
+  gap: 16px;
 }
 
 .tv-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline-block;
   font-family: var(--tv-font-mono);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 3px 8px;
   border-radius: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .tv-title {
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 700;
   color: #ffffff;
-  letter-spacing: -0.02em;
-  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px 0;
 }
 
 .tv-subtitle {
   font-size: 13px;
   color: #94a3b8;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .tv-telemetry-cluster {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .tv-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #111827;
-  border: 1px solid #1f293d;
-  padding: 6px 14px;
-  border-radius: 6px;
+  gap: 7px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  padding: 5px 12px;
+  border-radius: 4px;
   font-family: var(--tv-font-mono);
   font-size: 11px;
   font-weight: 600;
@@ -152,25 +149,18 @@ body, .gradio-container {
 }
 
 .tv-pill-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: tv-pulse 2s infinite;
-}
-
-@keyframes tv-pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  box-shadow: 0 0 6px #10b981;
 }
 
 /* Tabs Navigation */
 .tabs > .tab-nav {
   border-bottom: 1px solid #1f293d !important;
   background: transparent !important;
-  gap: 6px !important;
+  gap: 4px !important;
   margin-bottom: 16px !important;
 }
 
@@ -178,21 +168,20 @@ body, .gradio-container {
   font-family: var(--tv-font-mono) !important;
   font-size: 12px !important;
   font-weight: 600 !important;
-  letter-spacing: 0.04em !important;
+  letter-spacing: 0.03em !important;
   color: #94a3b8 !important;
   border: 1px solid #1f293d !important;
   border-radius: 6px 6px 0 0 !important;
-  padding: 10px 18px !important;
+  padding: 8px 16px !important;
   background: #111827 !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.15s ease !important;
 }
 
 .tabs > .tab-nav > button.selected {
   color: #10b981 !important;
-  border-color: rgba(16, 185, 129, 0.45) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
   border-bottom-color: #0a0e17 !important;
   background: #151f32 !important;
-  box-shadow: 0 -2px 12px rgba(16, 185, 129, 0.15) !important;
 }
 
 .tabs > .tab-nav > button:hover:not(.selected) {
@@ -204,88 +193,220 @@ body, .gradio-container {
 .block {
   background-color: #111827 !important;
   border: 1px solid #1f293d !important;
-  border-radius: 8px !important;
+  border-radius: 6px !important;
 }
 
 /* Buttons */
 button.primary {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  background: #059669 !important;
   border: 1px solid rgba(16, 185, 129, 0.45) !important;
   color: #ffffff !important;
   font-family: var(--tv-font-mono) !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.03em !important;
   text-transform: uppercase !important;
-  border-radius: 6px !important;
-  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.3) !important;
-  transition: all 0.2s ease !important;
+  border-radius: 4px !important;
+  padding: 8px 16px !important;
+  transition: all 0.15s ease !important;
 }
 
 button.primary:hover {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5) !important;
-  transform: translateY(-1px) !important;
+  background: #10b981 !important;
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.4) !important;
 }
 
 /* Telemetry stat cards */
 .tv-card {
-  background: #151f32;
+  background: #111827;
   border: 1px solid #1f293d;
-  border-radius: 8px;
-  padding: 18px;
-  margin-top: 12px;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-top: 10px;
 }
 
 .tv-card-header {
   font-family: var(--tv-font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: #94a3b8;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
-.tv-card-value {
+/* Station 04 Dispatch Panel */
+.tv-dispatch-panel {
+  background: #111827;
+  border: 1px solid #1f293d;
+  border-radius: 8px;
+  padding: 22px 24px;
+  margin: 6px 0 16px 0;
+}
+
+.tv-dispatch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #1f293d;
+}
+
+.tv-station-id {
   font-family: var(--tv-font-mono);
-  font-size: 24px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #10b981;
+  margin-bottom: 4px;
+}
+
+.tv-dispatch-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.tv-dispatch-sub {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.tv-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #059669;
+  color: #ffffff !important;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  padding: 9px 18px;
+  border-radius: 5px;
+  font-family: var(--tv-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-decoration: none !important;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+}
+
+.tv-launch-btn:hover {
+  background: #10b981;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.tv-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.tv-spec-item {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+
+.tv-spec-key {
+  font-family: var(--tv-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.tv-spec-val {
+  font-family: var(--tv-font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 3px;
+}
+
+.tv-spec-val.highlight-green {
   color: #10b981;
 }
 
-.tv-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff !important;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 15px;
-  text-decoration: none;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+.tv-spec-val.highlight-amber {
+  color: #f59e0b;
 }
 
-.tv-cta-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(16, 185, 129, 0.5);
+.tv-spec-val.highlight-cyan {
+  color: #38bdf8;
+}
+
+.tv-spec-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.tv-controls-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid #1f293d;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.tv-controls-label {
+  font-family: var(--tv-font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  color: #64748b;
+  letter-spacing: 0.06em;
+}
+
+.tv-kbd-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tv-kbd-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+kbd {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-bottom: 2px solid #334155;
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: var(--tv-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #f1f5f9;
 }
 
 /* Footer */
 .tv-footer {
-  margin-top: 36px;
-  padding: 22px 20px;
+  margin-top: 32px;
+  padding: 18px 20px;
   border-top: 1px solid #1f293d;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 14px;
-  font-size: 12px;
+  gap: 12px;
+  font-size: 11px;
   color: #64748b;
   font-family: var(--tv-font-mono);
 }
@@ -379,31 +500,31 @@ def _effective_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
 def _metric_markdown(metrics: Dict[str, Any], title: str) -> str:
     effective = _effective_metrics(metrics)
     calibration = (
-        "Étalonnée (acceptée)" if (metrics.get("calibrated") or {}).get("calibration_accepted", False) else "Brute (rejetée)"
+        "Étalonnée" if (metrics.get("calibrated") or {}).get("calibration_accepted", False) else "Brute"
     )
     lines = [
-        f"#### Spécifications Métrologiques &bull; {title}",
+        f"#### Spécifications Métrologiques &mdash; {title}",
         "",
-        "| Grandeur Métrologique | Valeur Observée | Statut Opérationnel |",
+        "| Grandeur | Valeur | Spécification |",
         "| :--- | :---: | :--- |",
-        f"| **Exactitude Globale** | **{effective['acc'] * 100:.2f} %** | Conforme tolérance nominale |",
+        f"| **Exactitude Globale** | **{effective['acc'] * 100:.2f} %** | Tolérance nominale NEU-CLS |",
         f"| **Indice Macro-F1** | **{effective['macro_f1']:.4f}** | Équilibré inter-classes |",
         f"| **Erreur de Calibration (ECE)** | **{effective['ece']:.4f}** | Régime {calibration} |",
-        f"| **Perte NLL** | {effective['nll']:.4f} | Log-vraisemblance normalisée |",
+        f"| **Perte NLL** | {effective['nll']:.4f} | Log-vraisemblance |",
         f"| **Score Brier** | {effective['brier']:.4f} | Écart quadratique moyen |",
         f"| **Robustesse FGSM (ε=0.03)** | {metrics['rob_acc_003'] * 100:.2f} % | Résilience sous perturbation |",
     ]
     if metrics.get("old_acc") is not None:
-        lines.insert(5, f"| **Classes Antérieures (1–3)** | {metrics['old_acc'] * 100:.2f} % | Tâche initiale préservée |")
+        lines.insert(5, f"| **Classes Antérieures (1–3)** | {metrics['old_acc'] * 100:.2f} % | Tâche initiale |")
     if metrics.get("new_acc") is not None:
-        lines.insert(6, f"| **Classes Récentes (4–6)** | {metrics['new_acc'] * 100:.2f} % | Extension incrémentale validée |")
+        lines.insert(6, f"| **Classes Récentes (4–6)** | {metrics['new_acc'] * 100:.2f} % | Extension incrémentale |")
     if metrics.get("forgetting") is not None:
-        lines.insert(7, f"| **Taux d'Oubli Catastrophique** | {metrics['forgetting'] * 100:.2f} % | Pénalisation synaptique Fisher |")
+        lines.insert(7, f"| **Taux d'Oubli Catastrophique** | {metrics['forgetting'] * 100:.2f} % | Pénalisation Fisher |")
     return "\n".join(lines)
 
 
 def _bar_figure(labels: List[str], values: List[float], title: str, ylabel: str = "%") -> plt.Figure:
-    fig, ax = plt.subplots(figsize=(6.4, 3.2), dpi=140, facecolor="#111827")
+    fig, ax = plt.subplots(figsize=(6.4, 3.0), dpi=140, facecolor="#111827")
     ax.set_facecolor("#0f172a")
     ax.grid(axis="y", color="#1e293d", linestyle="--", alpha=0.6)
     for spine in ax.spines.values():
@@ -414,7 +535,7 @@ def _bar_figure(labels: List[str], values: List[float], title: str, ylabel: str 
     ax.title.set_color("#f8fafc")
 
     colors = ["#3b82f6", "#10b981", "#06b6d4", "#a855f7", "#f59e0b"]
-    bars = ax.bar(labels, values, color=colors[: len(labels)], edgecolor="#1f293d", width=0.52)
+    bars = ax.bar(labels, values, color=colors[: len(labels)], edgecolor="#1f293d", width=0.48)
     ax.set_title(title, fontweight="bold", fontsize=10, pad=10)
     ax.set_ylabel(ylabel)
     ax.set_ylim(0, max(values) * 1.18 if values else 100)
@@ -503,20 +624,17 @@ class ClipAttentionTab:
 
             note = f"""
 <div class="tv-card">
-  <div class="tv-card-header">ANALYSE D'ATTENTION SPATIALE &bull; MODÈLE FONDATIONNEL (ViT-B/32)</div>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 10px;">
+  <div class="tv-card-header">ATTENTION SPATIALE &mdash; MODÈLE FONDATIONNEL (ViT-B/32)</div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 6px;">
     <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Projection Attention :</span><br><strong style="color:#ffffff; font-size:14px;">CLS &rarr; Patchs (12 couches, 7&times;7)</strong></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Exactitude Zero-Shot S0 :</span><br><strong style="color:#f59e0b; font-size:16px;">{zs_str}</strong></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Sonde Linéaire Étalonnée S0 :</span><br><strong style="color:#10b981; font-size:16px;">{probe_str}</strong></div>
-  </div>
-  <div style="margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.5;">
-    Le modèle fondationnel zero-shot capture les structures morphologiques globales mais nécessite une sonde linéaire étalonnée pour atteindre le niveau d'exactitude requis en contrôle industriel haute cadence (99,44 %).
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Exactitude Zero-Shot S0 :</span><br><strong style="color:#f59e0b; font-size:15px;">{zs_str}</strong></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Sonde Linéaire Calibrée S0 :</span><br><strong style="color:#10b981; font-size:15px;">{probe_str}</strong></div>
   </div>
 </div>
 """
             return overlay, scores, note
         except Exception as exc:  # pragma: no cover
-            return None, None, f"Initialisation CLIP indisponible dans cet environnement ({type(exc).__name__}: {exc}). Métriques de référence préservées dans `results/s0_clip.json`."
+            return None, None, f"Initialisation CLIP indisponible dans cet environnement ({type(exc).__name__}: {exc}). Métriques de référence dans `results/s0_clip.json`."
 
 
 # ---------------------------------------------------------------------------
@@ -575,7 +693,7 @@ class SimCLRTab:
         scratch_data = self.data["supervised_from_scratch"]["label_fractions"]
         scratch = [scratch_data[k]["acc"] * 100 for k in keys]
 
-        fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.6), dpi=140, facecolor="#111827")
+        fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.4), dpi=140, facecolor="#111827")
         for ax in axes:
             ax.set_facecolor("#0f172a")
             ax.grid(True, color="#1e293b", linestyle="--", alpha=0.6)
@@ -638,13 +756,10 @@ class SimCLRTab:
 
         detail = f"""
 <div class="tv-card">
-  <div class="tv-card-header">ÉVALUATION AUTO-SUPERVISÉE &bull; RÉGIME DE LABELLISATION</div>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 10px;">
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Défaut Prédit :</span><br><strong style="color:#ffffff; font-size:16px;">{pred}</strong></div>
+  <div class="tv-card-header">RÉSULTAT D'INFÉRENCE &mdash; CONTRÔLE SURFACIQUE</div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 6px;">
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Défaut Prédit :</span><br><strong style="color:#ffffff; font-size:15px;">{pred}</strong></div>
     <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Point de Contrôle :</span><br><span style="color:#cbd5e1; font-family:monospace; font-size:13px;">{Path(path).name}</span></div>
-  </div>
-  <div style="margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.5;">
-    Sous contrainte extrême d'annotation (1 % et 5 %), la sonde linéaire entraînée sur l'espace latent SimCLR surpasse nettement le CNN entraîné ex-nihilo (+20 à 30 % de précision), démontrant une forte efficacité de généralisation avant convergence mutuelle à 100 % de supervision.
   </div>
 </div>
 """
@@ -680,17 +795,7 @@ class EWCTab:
     def metrics_markdown(self, strategy_label: str, lambda_index: int) -> str:
         key, strategy, title = self.resolve(strategy_label, lambda_index)
         metrics = strategy["metrics"]
-        text = _metric_markdown(metrics, title)
-        if key == "ewc_replay":
-            text += (
-                "\n\n> **Recommandation opérationnelle :** Configuration de référence EWC combinant la rigidité de Fisher "
-                "au Replay d'expérience. Le modèle **Replay seul** atteint le plafond d'exactitude (93,06 %)."
-            )
-        if metrics.get("calibrated", {}).get("calibration_accepted") is False:
-            text += (
-                "\n\n> **Alerte métrologique :** Facteur d'échelle hors tolérance ; probabilités brutes présentées."
-            )
-        return text
+        return _metric_markdown(metrics, title)
 
     def bar_figure(self, strategy_label: str, lambda_index: int) -> plt.Figure:
         _, strategy, title = self.resolve(strategy_label, lambda_index)
@@ -746,11 +851,11 @@ class EWCTab:
 
         detail = f"""
 <div class="tv-card">
-  <div class="tv-card-header">RÉSULTAT D'INFÉRENCE &bull; MÉMOIRE SYNAPTIQUE INCRÉMENTALE</div>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-top: 10px;">
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Défaut Prédit :</span><br><strong style="color:#ffffff; font-size:16px;">{pred}</strong></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Classes Anciennes (1–3) :</span><br><strong style="color:#10b981; font-size:15px;">{metrics['old_acc'] * 100:.2f} %</strong></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Classes Nouvelles (4–6) :</span><br><strong style="color:#06b6d4; font-size:15px;">{metrics['new_acc'] * 100:.2f} %</strong></div>
+  <div class="tv-card-header">RÉSULTAT D'INFÉRENCE &mdash; EXTENSION CONTINUE</div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-top: 6px;">
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Défaut Prédit :</span><br><strong style="color:#ffffff; font-size:15px;">{pred}</strong></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Classes 1–3 :</span><br><strong style="color:#10b981; font-size:15px;">{metrics['old_acc'] * 100:.2f} %</strong></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Classes 4–6 :</span><br><strong style="color:#06b6d4; font-size:15px;">{metrics['new_acc'] * 100:.2f} %</strong></div>
     <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Taux d'Oubli :</span><br><strong style="color:#f59e0b; font-size:15px;">{metrics['forgetting'] * 100:.2f} %</strong></div>
   </div>
 </div>
@@ -807,22 +912,22 @@ def build_demo(root: Union[str, Path] = ROOT):
             conf_val = result["confidence"] * 100
             tau_gate = 99.40  # derived tau_95 gate
             route_status = (
-                f'<span style="color:#10b981; font-weight:700;">VOIE A (CONFORME)</span> &bull; Conditionnement automatisé haute cadence (confiance {conf_val:.2f}% &ge; &tau;<sub>95</sub> 99.40%)'
+                f'<span style="color:#10b981; font-weight:700;">VOIE A (CONFORME)</span> &mdash; Conditionnement continu (confiance {conf_val:.2f}% &ge; &tau;<sub>95</sub> 99.40%)'
                 if conf_val >= tau_gate else
-                f'<span style="color:#f59e0b; font-weight:700;">VOIE B (CONTRÔLE)</span> &bull; Aiguillage pneumatique vers opérateur humain requis (confiance {conf_val:.2f}% &lt; &tau;<sub>95</sub> 99.40%)'
+                f'<span style="color:#f59e0b; font-weight:700;">VOIE B (CONTRÔLE)</span> &mdash; Aiguillage opérateur (confiance {conf_val:.2f}% &lt; &tau;<sub>95</sub> 99.40%)'
             )
 
             detail = f"""
 <div class="tv-card">
-  <div class="tv-card-header">TÉLÉMÉTRIE D'INSPECTION &bull; CONTRÔLE SURFACIQUE</div>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-top: 10px;">
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Défaut Détecté :</span><br><strong style="color:#ffffff; font-size:16px;">{result['predicted_class']}</strong></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Confiance Étalonnée :</span><br><strong style="color:#10b981; font-size:16px;">{conf_val:.2f} %</strong></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Facteur Échelle T :</span><br><span style="color:#e2e8f0; font-family:monospace; font-size:14px;">{result['temperature_used']:.2f}</span></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Perturbation FGSM &epsilon; :</span><br><span style="color:#f59e0b; font-family:monospace; font-size:14px;">{result['epsilon_used']:.3f}</span></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Latence Inférence :</span><br><span style="color:#10b981; font-family:monospace; font-weight:700; font-size:14px;">{result['latency_ms']:.1f} ms (&lt; 500 ms CONFORME)</span></div>
+  <div class="tv-card-header">TÉLÉMÉTRIE D'INSPECTION &mdash; CONTRÔLE QUALITÉ</div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-top: 6px;">
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Défaut Détecté :</span><br><strong style="color:#ffffff; font-size:15px;">{result['predicted_class']}</strong></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Confiance Étalonnée :</span><br><strong style="color:#10b981; font-size:15px;">{conf_val:.2f} %</strong></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Facteur Échelle T :</span><br><span style="color:#e2e8f0; font-family:monospace; font-size:13px;">{result['temperature_used']:.2f}</span></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Perturbation FGSM &epsilon; :</span><br><span style="color:#f59e0b; font-family:monospace; font-size:13px;">{result['epsilon_used']:.3f}</span></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Latence Inférence :</span><br><span style="color:#10b981; font-family:monospace; font-weight:700; font-size:13px;">{result['latency_ms']:.1f} ms (&lt; 500 ms CONFORME)</span></div>
   </div>
-  <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #1f293d; font-size: 13px;">
+  <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #1f293d; font-size: 12px;">
     <strong>Décision d'Aiguillage :</strong> {route_status}
   </div>
 </div>
@@ -867,13 +972,13 @@ def build_demo(root: Union[str, Path] = ROOT):
             """
             <div class="tv-header">
               <div>
-                <div class="tv-badge">TRUSTVISION CORE v2.4 &bull; CONSOLE D'INSPECTION INDUSTRIELLE</div>
+                <div class="tv-badge">TRUSTVISION CORE v2.4 &mdash; CONSOLE D'INSPECTION INDUSTRIELLE</div>
                 <h1 class="tv-title">Station de Contrôle Qualité Surfacique (NEU-CLS)</h1>
-                <p class="tv-subtitle">Supervision avancée des modèles d'inspection optique haute cadence (S0 &rarr; S5) &bull; Détection de défauts d'acier laminé</p>
+                <p class="tv-subtitle">Supervision avancée des modèles d'inspection optique haute cadence (S0 &rarr; S5) &mdash; Détection de défauts d'acier laminé</p>
               </div>
               <div class="tv-telemetry-cluster">
-                <span class="tv-pill"><span class="tv-pill-dot"></span> SYSTÈME OPÉRATIONNEL</span>
-                <span class="tv-pill">NORME ISO/IEC 25010</span>
+                <span class="tv-pill"><span class="tv-pill-dot"></span> OPÉRATIONNEL</span>
+                <span class="tv-pill">ISO/IEC 25010</span>
                 <span class="tv-pill">LATENCE &lt; 500 ms</span>
               </div>
             </div>
@@ -885,7 +990,7 @@ def build_demo(root: Union[str, Path] = ROOT):
         # ------------------------------------------------------------------
         with gr.Tab("01 · DÉTECTION ZERO-SHOT & ATTENTION (VLM)"):
             gr.Markdown(
-                "**Modèle de Fondation Vision-Langage (OpenAI ViT-B/32)** &bull; "
+                "**Modèle de Fondation Vision-Langage (OpenAI ViT-B/32)** &mdash; "
                 "Évaluation de la transférabilité zero-shot sur défauts métallurgiques et extraction de l'attention spatiale multi-couches."
             )
             with gr.Row():
@@ -902,7 +1007,7 @@ def build_demo(root: Union[str, Path] = ROOT):
             gr.Examples(
                 examples=SAMPLE_IMAGES,
                 inputs=clip_image,
-                label="Échantillons industriels de référence (cliquez pour charger)",
+                label="Échantillons de référence",
             )
 
             clip_button.click(
@@ -916,8 +1021,8 @@ def build_demo(root: Union[str, Path] = ROOT):
         # ------------------------------------------------------------------
         with gr.Tab("02 · EFFICACITÉ D'ANNOTATION (SimCLR)"):
             gr.Markdown(
-                "**Apprentissage Auto-Supervisé Contrastif (SimCLR)** &bull; "
-                "Benchmarking de la résistance au manque d'annotations labellisées (budgets : 1 %, 5 %, 10 %, 100 %) vs modèle supervisé ex-nihilo."
+                "**Apprentissage Auto-Supervisé Contrastif (SimCLR)** &mdash; "
+                "Benchmarking sous contrainte d'annotation labellisée (1 %, 5 %, 10 %, 100 %) vs modèle supervisé direct."
             )
             simclr_plot = gr.Plot(value=simclr_tab.label_efficiency_figure(), label="Télémétrie S1")
             with gr.Row():
@@ -934,7 +1039,7 @@ def build_demo(root: Union[str, Path] = ROOT):
             gr.Examples(
                 examples=SAMPLE_IMAGES,
                 inputs=simclr_image,
-                label="Échantillons industriels de référence (cliquez pour charger)",
+                label="Échantillons de référence",
             )
 
             simclr_button.click(
@@ -948,12 +1053,12 @@ def build_demo(root: Union[str, Path] = ROOT):
         # ------------------------------------------------------------------
         with gr.Tab("03 · AUDIT DE CONFIANCE & DÉFENSE FGSM"):
             gr.Markdown(
-                "**Audit Métrologique & Résilience Adversariale** &bull; "
-                "Analyse de calibration bayésienne (Temperature Scaling), explicabilité visuelle (Grad-CAM & Integrated Gradients) et stress-test FGSM."
+                "**Audit Métrologique & Résilience Adversariale** &mdash; "
+                "Calibration bayésienne (Temperature Scaling), explicabilité visuelle (Grad-CAM & Integrated Gradients) et stress-test FGSM."
             )
             with gr.Row():
                 tab3_image = gr.Image(type="pil", label="Échantillon optique nominal (NEU-CLS)")
-                tab3_perturbed = gr.Image(type="pil", label="Échantillon sous perturbation adversariale FGSM")
+                tab3_perturbed = gr.Image(type="pil", label="Échantillon sous perturbation FGSM")
             with gr.Row():
                 tab3_model = gr.Radio(
                     choices=[("CNN Standard (Baseline)", "base"), ("CNN Renforcé (Défense Adversariale)", "adv")],
@@ -973,7 +1078,7 @@ def build_demo(root: Union[str, Path] = ROOT):
             gr.Examples(
                 examples=SAMPLE_IMAGES,
                 inputs=tab3_image,
-                label="Échantillons industriels de référence (cliquez pour charger)",
+                label="Échantillons de référence",
             )
 
             tab3_button.click(
@@ -987,7 +1092,7 @@ def build_demo(root: Union[str, Path] = ROOT):
         # ------------------------------------------------------------------
         with gr.Tab("04 · EXTENSION CONTINUE & REPLAY (EWC)"):
             gr.Markdown(
-                "**Préservation Synaptique & Apprentissage Incrémental (EWC)** &bull; "
+                "**Préservation Synaptique & Apprentissage Incrémental (EWC)** &mdash; "
                 "Atténuation de l'oubli catastrophique lors de l'extension de détection (Tâche 1: 3 classes &rarr; Tâche 2: 6 classes en configuration Single-Head)."
             )
             with gr.Row():
@@ -1021,7 +1126,7 @@ def build_demo(root: Union[str, Path] = ROOT):
             gr.Examples(
                 examples=SAMPLE_IMAGES,
                 inputs=ewc_image,
-                label="Échantillons industriels de référence (cliquez pour charger)",
+                label="Échantillons de référence",
             )
 
             for control in (ewc_strategy, ewc_lambda):
@@ -1045,59 +1150,53 @@ def build_demo(root: Union[str, Path] = ROOT):
         with gr.Tab("05 · JUMEAU NUMÉRIQUE 3D (LIGNE 04)"):
             gr.HTML(
                 """
-                <div style="background: linear-gradient(180deg, #131d31 0%, #0d1424 100%); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 26px; margin-bottom: 22px;">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+                <div class="tv-dispatch-panel">
+                  <div class="tv-dispatch-header">
                     <div>
-                      <div class="tv-badge">LIGNE 04 &bull; POSTE DE CONTRÔLE QUALITÉ HAUTE CADENCE</div>
-                      <h2 style="color: #ffffff; margin: 6px 0 10px 0; font-size: 22px; font-weight: 800;">Jumeau Numérique Industriel 3D (Three.js WebGL)</h2>
-                      <p style="color: #94a3b8; font-size: 14px; margin: 0; max-width: 750px; line-height: 1.6;">
-                        Simulation physique temps réel cadencée à 60 FPS reproduisant le scanner optique zénithal,
-                        le convoyeur d'acier à vitesse stabilisée (0.85 m/s) et le système d'aiguillage pneumatique bistable
-                        piloté par la porte de confiance bayésienne (&tau;<sub>95</sub> = 0.9940).
-                      </p>
+                      <div class="tv-station-id">STATION 04 &mdash; POSTE DE CONTRÔLE OPTIQUE & TRI PNEUMATIQUE</div>
+                      <div class="tv-dispatch-title">Jumeau Numérique Industriel 3D</div>
+                      <div class="tv-dispatch-sub">Simulation physique Three.js WebGL (60 FPS) &bull; Convoyeur 0.85 m/s &bull; Aiguilleur bistable piloté par seuil bayésien &tau;<sub>95</sub> = 0.9940</div>
                     </div>
-                    <div style="display: flex; gap: 10px;">
-                      <span class="tv-pill"><span class="tv-pill-dot"></span> 60 FPS FLUIDE</span>
-                      <span class="tv-pill">MOTEUR WEBGL 2</span>
+                    <div>
+                      <a href="/factory-line" target="_blank" class="tv-launch-btn">
+                        <span>Ouvrir la Station 3D</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                      </a>
                     </div>
                   </div>
-                </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 24px 0;">
-                  <div class="tv-card">
-                    <div class="tv-card-header">Porte de Confiance &tau;<sub>95</sub></div>
-                    <div class="tv-card-value">0.9940</div>
-                    <div style="color: #94a3b8; font-size: 12px; margin-top: 6px;">Seuil d'automatisation validé pour garantir 95 % de couverture sans faux négatif.</div>
+                  <div class="tv-spec-grid">
+                    <div class="tv-spec-item">
+                      <div class="tv-spec-key">SEUIL DE CONFIANCE &tau;<sub>95</sub></div>
+                      <div class="tv-spec-val highlight-green">0.9940</div>
+                      <div class="tv-spec-desc">Couverture autonome 95% certifiée sans faux négatif</div>
+                    </div>
+                    <div class="tv-spec-item">
+                      <div class="tv-spec-key">VOIE A &mdash; CONFORME</div>
+                      <div class="tv-spec-val">Conditionnement</div>
+                      <div class="tv-spec-desc">Évacuation continue haute cadence (confiance &ge; 0.9940)</div>
+                    </div>
+                    <div class="tv-spec-item">
+                      <div class="tv-spec-key">VOIE B &mdash; CONTRÔLE</div>
+                      <div class="tv-spec-val highlight-amber">Aiguillage Vérin</div>
+                      <div class="tv-spec-desc">Déviation opérateur si confiance &lt; 0.9940 ou perturbation FGSM</div>
+                    </div>
+                    <div class="tv-spec-item">
+                      <div class="tv-spec-key">CAPTEUR OPTIQUE</div>
+                      <div class="tv-spec-val highlight-cyan">4K PBR Zénithal</div>
+                      <div class="tv-spec-desc">Inspection linéaire synchrone à 60 FPS avec éclairage rasant</div>
+                    </div>
                   </div>
-                  <div class="tv-card">
-                    <div class="tv-card-header">Voie A &bull; Évacuation Nominale</div>
-                    <div style="color: #10b981; font-weight: 700; font-size: 16px; margin: 4px 0;">Acceptation Continue</div>
-                    <div style="color: #94a3b8; font-size: 12px;">Confiance &ge; 0.9940 &rarr; Évacuation vers banderolage et palettisation haute cadence.</div>
-                  </div>
-                  <div class="tv-card">
-                    <div class="tv-card-header">Voie B &bull; Déviation Contrôle</div>
-                    <div style="color: #f59e0b; font-weight: 700; font-size: 16px; margin: 4px 0;">Aiguillage Pneumatique</div>
-                    <div style="color: #94a3b8; font-size: 12px;">Confiance &lt; 0.9940 ou stress FGSM &rarr; Basculement immédiat vers poste opérateur humain.</div>
-                  </div>
-                  <div class="tv-card">
-                    <div class="tv-card-header">Capteur Optique Zénithal</div>
-                    <div style="color: #38bdf8; font-weight: 700; font-size: 16px; margin: 4px 0;">Scanner Linéaire 4K</div>
-                    <div style="color: #94a3b8; font-size: 12px;">Éclairage rasant PBR, cinématique validée par 7 bancs de tests automatisés.</div>
-                  </div>
-                </div>
 
-                <div style="background: linear-gradient(180deg, #151f32 0%, #0f172a 100%); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 32px 24px; text-align: center; margin: 24px 0;">
-                  <div style="font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 8px;">
-                    Console de Supervision Plein Écran
-                  </div>
-                  <p style="color: #94a3b8; font-size: 14px; max-width: 600px; margin: 0 auto 24px auto; line-height: 1.5;">
-                    Afin d'éviter tout conflit de formatage dans les cadres imbriqués et de bénéficier du rendu graphique pleine résolution avec audio spatial et contrôles caméra libres, le jumeau numérique s'exécute dans son interface dédiée.
-                  </p>
-                  <a href="/factory-line" target="_blank" class="tv-cta-btn">
-                    <span style="font-size: 18px;">🏭</span> Ouvrir la Station de Contrôle 3D (Nouvel Onglet)
-                  </a>
-                  <div style="margin-top: 20px; font-size: 12px; color: #64748b; font-family: var(--tv-font-mono);">
-                    Raccourcis : <strong>1 à 6</strong> (caméras opératoires) &bull; <strong>Espace</strong> (pause synchrone) &bull; <strong>.</strong> (pas-à-pas) &bull; <strong>Clic droit + Glisser</strong> (translation panoramique)
+                  <div class="tv-controls-bar">
+                    <div class="tv-controls-label">COMMANDES OPÉRATEUR :</div>
+                    <div class="tv-kbd-list">
+                      <span class="tv-kbd-entry"><kbd>1</kbd>&ndash;<kbd>6</kbd> Vues caméra</span>
+                      <span class="tv-kbd-entry"><kbd>Espace</kbd> Pause/Reprise</span>
+                      <span class="tv-kbd-entry"><kbd>.</kbd> Pas-à-pas</span>
+                      <span class="tv-kbd-entry"><kbd>Clic Droit + Glisser</kbd> Panoramique</span>
+                      <span class="tv-kbd-entry"><kbd>Molette</kbd> Zoom</span>
+                    </div>
                   </div>
                 </div>
                 """
@@ -1108,12 +1207,12 @@ def build_demo(root: Union[str, Path] = ROOT):
             """
             <div class="tv-footer">
               <div>
-                <strong>TRUSTVISION INDUSTRIAL QUALITY SUITE &bull; CORE v2.4</strong><br>
-                Architecture certifiée NEU-CLS &bull; Traçabilité métrologique ISO/IEC 25010
+                <strong>TRUSTVISION CORE v2.4 &mdash; CONTRÔLE SURFACIQUE NEU-CLS</strong><br>
+                Architecture certifiée &bull; Métrologie ISO/IEC 25010
               </div>
               <div style="text-align: right;">
-                Suites de tests : <code>pytest tests/ (53/53 PASSED)</code> &bull; <code>mechanics.test.mjs (7/7 PASSED)</code><br>
-                Jeu de données : NEU-CLS 6 classes &bull; Modèles S0, S1, S2, S3, S4, S5
+                Validation : <code>pytest tests/ (53/53 PASSED)</code> &bull; <code>mechanics.test.mjs (7/7 PASSED)</code><br>
+                Bancs de tests automatisés &bull; Modèles S0 à S5
               </div>
             </div>
             """
