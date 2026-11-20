@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111518">
+  <meta name="description" content="Cellule industrielle de contrôle non-destructif et de tri automatisé multi-baies pour tôles d'acier. Vision linéaire 4K, classification par réseau de neurones convolutif et explicabilité Grad-CAM.">
+  <title>TrustVision | Contrôle Qualité & Tri Automatisé Ligne 04</title>
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M4 7 12 3l8 4v10l-8 4-8-4zM4 7l8 4 8-4m-8 4v10M8 5l8 4v5l-4 2"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M3 3h18v18H3zM3 12h18M12 3v18"/></symbol>
+    <symbol id="i-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(-30 12 12)"/></symbol>
+    <symbol id="i-vacuum" viewBox="0 0 24 24"><path d="M3 4h18M6 4v9m12-9v9M9 8h6m-3 0v7M8 19h8M7 15h10l2 4h-2m-10 0H5l2-4"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 6h13v12H3zM16 10l5-3v10l-5-3M6 9h3"/></symbol>
+    <symbol id="i-sensor" viewBox="0 0 24 24"><path d="M2 12h5l3-7 4 14 3-7h5"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm4 16h8m-4-2v2"/></symbol>
+    <symbol id="i-reject" viewBox="0 0 24 24"><path d="M3 15h18M7 15V5m0 0h9m-3-3 3 3-3 3m5 7v5H5v-5"/></symbol>
+    <symbol id="i-connect" viewBox="0 0 24 24"><path d="M6 3v4m5-4v4M4 7h9v4a4.5 4.5 0 0 1-9 0zm4.5 8.5V18a3 3 0 0 0 3 3H17a3 3 0 0 0 3-3v-4m-2 2 2-2 2 2"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></symbol>
+    <symbol id="i-flags" viewBox="0 0 24 24"><path d="M4 22V3m0 1c4-4 8 4 16 0v11c-8 4-12-4-16 0"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 24 24"><path d="M5 3l14 10-7 1-3 6-4-17z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 12 7-12 7z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 1 2.8 6.5M3 6v6h6"/></symbol>
+    <symbol id="i-step" viewBox="0 0 24 24"><path d="m5 6 9 6-9 6zM18 6v12"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m3 8 9-5 9 5-9 5zm0 4.5 9 5 9-5M3 17l9 5 9-5"/></symbol>
+  </svg>
+  <canvas id="hmiDisplay" width="640" height="384" style="display:none" aria-hidden="true"></canvas>
+
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"><svg class="icon"><use href="#i-logo"></use></svg></div>
+        <div><div class="wordmark">Trust<span>Vision</span></div><div class="brand-caption">CONTRÔLE INDUSTRIEL & TRI AUTOMATISÉ</div></div>
+      </div>
+      <div class="breadcrumb"><span>Ligne 04</span><span class="crumb-slash">/</span><b>Poste de Contrôle Surfacique & Tri Multi-Baies</b></div>
+      <div class="top-actions">
+        <span class="mode-indicator" id="modeIndicator"><i></i><span>Automate API & Modèle S2 : En ligne</span></span>
+      </div>
+    </header>
+
+    <main class="workplace">
+      <section class="stage-column" aria-labelledby="cellTitle">
+        <div class="stage" id="stage">
+          <div id="viewport"></div>
+          <div class="stage-shade"></div>
+          <div class="stage-heading">
+            <div class="eyebrow"><span></span> CELLULE DE CONTRÔLE <b>/</b> LIGNE 04</div>
+            <h1 id="cellTitle">Cellule de Contrôle & Tri Multi-Baies</h1>
+            <p id="viewText">Contrôle optique surfacique haute cadence et aiguillage pneumatique</p>
+          </div>
+
+          <div class="annotations" aria-label="Raccourcis des postes">
+            <button type="button" class="pin" data-mark="infeed" data-view="infeed" hidden><span class="pin-number">01</span><span class="pin-label">Alimentation</span></button>
+            <button type="button" class="pin" data-mark="optics" data-view="optics" hidden><span class="pin-number">02</span><span class="pin-label">Portique vision</span></button>
+            <button type="button" class="pin" data-mark="reject" data-view="reject" hidden><span class="pin-number">03</span><span class="pin-label">Tri pneumatique</span></button>
+            <button type="button" class="pin" data-mark="terminal" data-view="terminal" hidden><span class="pin-number">04</span><span class="pin-label">Pupitre IHM</span></button>
+            <button type="button" class="pin" data-mark="outfeed" data-view="outfeed" hidden><span class="pin-number">05</span><span class="pin-label">Évacuation conforme</span></button>
+          </div>
+
+          <div class="stage-bottom">
+            <div class="stage-help"><svg class="icon"><use href="#i-cursor"></use></svg><span>Clic gauche : pivoter <b>·</b> Clic droit / Molette : translater <b>·</b> Défiler : zoomer</span></div>
+            <div class="viewport-tools">
+              <button id="toggleLabels" class="button icon-button" type="button" title="Repères des postes" aria-label="Repères des postes" aria-pressed="true"><svg class="icon"><use href="#i-flags"></use></svg></button>
+              <button id="toggleProjection" class="button icon-button" type="button" title="Vue : Perspective 3D (Touche P pour vue axonométrique CAD)" aria-label="Basculer la projection caméra" aria-pressed="true"><svg class="icon"><use href="#i-orbit"></use></svg></button>
+              <button id="fullscreen" class="button icon-button" type="button" title="Plein écran" aria-label="Plein écran" aria-pressed="false"><svg class="icon"><use href="#i-expand"></use></svg></button>
+            </div>
+          </div>
+          <div class="boot" id="boot"><span class="boot-indicator"></span><p id="bootMessage">Initialisation de la cellule d'inspection...</p></div>
+        </div>
+
+        <nav class="view-nav" aria-label="Vues caméra">
+          <span class="view-nav-label mono">VUE</span>
+          <button class="view-button" type="button" data-view="overview" aria-pressed="true" title="Vue générale (1)"><svg class="icon"><use href="#i-orbit"></use></svg>Vue générale</button>
+          <button class="view-button" type="button" data-view="infeed" aria-pressed="false" title="Alimentation par ventouses"><svg class="icon"><use href="#i-vacuum"></use></svg>Alimentation</button>
+          <button class="view-button" type="button" data-view="optics" aria-pressed="false" title="Optique linéaire 4K (2)"><svg class="icon"><use href="#i-camera"></use></svg>Optique</button>
+          <button class="view-button" type="button" data-view="bay1" aria-pressed="false" title="Baie 1 : Ébavurage & Polissage (3)"><svg class="icon"><use href="#i-reject"></use></svg>Baie 1 (Retouche)</button>
+          <button class="view-button" type="button" data-view="bay2" aria-pressed="false" title="Baie 2 : Alerte Usure Cylindres (4)"><svg class="icon"><use href="#i-sensor"></use></svg>Baie 2 (Outillage)</button>
+          <button class="view-button" type="button" data-view="bay3" aria-pressed="false" title="Baie 3 : Rebut Refusion Four (5)"><svg class="icon"><use href="#i-reject"></use></svg>Baie 3 (Rebut)</button>
+          <button class="view-button" type="button" data-view="terminal" aria-pressed="false" title="Pupitre de commande opérateur"><svg class="icon"><use href="#i-monitor"></use></svg>Pupitre IHM</button>
+          <button class="view-button" type="button" data-view="outfeed" aria-pressed="false" title="Évacuation qualité supérieure (6)"><svg class="icon"><use href="#i-check"></use></svg>Évacuation</button>
+          <button class="view-button" type="button" data-view="top" aria-pressed="false" title="Vue d'implantation CAD (7)"><svg class="icon"><use href="#i-grid"></use></svg>Plan</button>
+        </nav>
+      </section>
+
+      <aside class="inspector" aria-labelledby="inspectionTitle">
+        <div class="inspect-heading">
+          <div class="eyebrow">CAMÉRA LINÉAIRE 4K</div>
+          <div class="inspect-heading-row"><h2 id="inspectionTitle">Flux d'inspection</h2><svg class="icon"><use href="#i-camera"></use></svg></div>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Panneaux de contrôle">
+          <button type="button" id="scanTab" role="tab" aria-controls="scanPanel" aria-selected="true">Contrôle direct</button>
+          <button type="button" id="machineTab" role="tab" aria-controls="machinePanel" aria-selected="false" tabindex="-1">Données machine</button>
+        </div>
+
+        <section class="inspect-content" id="scanPanel" role="tabpanel" aria-labelledby="scanTab">
+          <div class="section-label"><span>CAM-01 / N&amp;B</span><span class="indicator" id="scanStatus">ARMÉE</span></div>
+          <figure class="scan-figure">
+            <div class="scan-view">
+              <canvas id="scanDisplay" width="480" height="320" aria-label="Capture en niveaux de gris de la caméra linéaire"></canvas>
+              <span class="scan-corner tl"></span><span class="scan-corner tr"></span><span class="scan-corner bl"></span><span class="scan-corner br"></span>
+            </div>
+            <figcaption class="mono"><span id="scanFrame">AUCUNE TÔLE</span><span id="scanProgress">Zone 224 × 224</span></figcaption>
+          </figure>
+
+          <div class="feed-result" id="feedResult" aria-live="polite">
+            <div class="result-top"><span class="section-label" id="resultId">DERNIÈRE DÉCISION</span><span class="result-badge" id="resultBadge">EN ATTENTE</span></div>
+            <h3 id="resultTitle">En attente du premier passage</h3>
+            <p id="resultSource">Échantillons étalons réels. Modèle calibré actif.</p>
+            <div class="review-actions" id="reviewActions" hidden>
+              <button class="button review-action review-pass" id="routePass" type="button" title="Valider la tôle vers l'évacuation conforme [Touche : A]">Valider la tôle (A) <svg class="icon"><use href="#i-check"></use></svg></button>
+              <button class="button review-action review-reject" id="routeReject" type="button" title="Aiguiller la tôle vers le bac de rebut [Touche : R]">Rejeter la tôle (R) <svg class="icon"><use href="#i-arrow"></use></svg></button>
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top: 14px;">VOLUMES DE TRI</div>
+          <section class="outputs" style="grid-template-columns: repeat(4, 1fr); padding: 10px 0; border-bottom: 1px solid var(--border);" aria-label="Volumes de tri">
+            <div style="padding: 0 4px; text-align: center;">
+              <span class="section-label" style="justify-content: center; font-size: 8.5px;"><i class="output-dot pass"></i> CONFORME</span>
+              <strong id="passCount" style="font-size: 20px; display: block; margin: 2px 0;">00</strong>
+              <span style="font-size: 9px; color: #7f9196;">Validé</span>
+            </div>
+            <div style="border-left: 1px solid var(--border); padding: 0 4px; text-align: center;">
+              <span class="section-label" style="justify-content: center; font-size: 8.5px;"><i class="output-dot" style="background: var(--amber);"></i> BAIE 01</span>
+              <strong id="countRework" style="font-size: 20px; display: block; margin: 2px 0;">00</strong>
+              <span style="font-size: 9px; color: #7f9196;">Retouche</span>
+            </div>
+            <div style="border-left: 1px solid var(--border); padding: 0 4px; text-align: center;">
+              <span class="section-label" style="justify-content: center; font-size: 8.5px;"><i class="output-dot" style="background: #62b0d9;"></i> BAIE 02</span>
+              <strong id="countTooling" style="font-size: 20px; display: block; margin: 2px 0;">00</strong>
+              <span style="font-size: 9px; color: #7f9196;">Outillage</span>
+            </div>
+            <div style="border-left: 1px solid var(--border); padding: 0 4px; text-align: center;">
+              <span class="section-label" style="justify-content: center; font-size: 8.5px;"><i class="output-dot reject"></i> BAIE 03</span>
+              <strong id="rejectCount" style="font-size: 20px; display: block; margin: 2px 0;">00</strong>
+              <span style="font-size: 9px; color: #7f9196;">Rebut</span>
+            </div>
+          </section>
+
+          <div class="event-head section-label"><span>DERNIÈRES INSPECTIONS</span><span id="totalCaptures">00</span></div>
+          <ol class="event-list" id="eventList"><li class="empty-event">Les contrôles terminés s'afficheront ici.</li></ol>
+        </section>
+
+        <section class="inspect-content machine-content" id="machinePanel" role="tabpanel" aria-labelledby="machineTab" hidden>
+          <div class="section-label">CARACTÉRISTIQUES DE LA LIGNE</div>
+          <dl class="specs">
+            <div><dt>Plan de convoyage</dt><dd>820 mm</dd></div>
+            <div><dt>Dimensions des tôles</dt><dd>580 × 680 × 6 mm</dd></div>
+            <div><dt>Capteur linéaire / Champ</dt><dd>4096 px / 760 mm</dd></div>
+            <div><dt>Éclairage rasant sombre</dt><dd>26°</dd></div>
+            <div><dt>Résolution codeur / Pas</dt><dd>4096 imp/tr · ÷3</dd></div>
+            <div><dt>Course des éjecteurs</dt><dd>965 mm</dd></div>
+          </dl>
+          <div class="section-label">CALQUES TECHNIQUES</div>
+          <label class="option-switch"><span>Chemins de câbles &amp; réseaux</span><input id="toggleRoutes" type="checkbox"></label>
+          <div class="route-legend mono" id="routesLegend" hidden><span>Signal</span><span>Puissance</span><span>Air</span></div>
+          <label class="option-switch"><span>Faisceaux optiques &amp; détection</span><input id="toggleOptics" type="checkbox" checked></label>
+          <div class="sample-block">
+            <div class="section-label">TÔLE SUIVANTE EN STOCK</div>
+            <div class="sample-control"><select id="sampleClass" aria-label="Classe d'échantillon métallographique">
+              <option value="Sc">Sc / Rayures de laminage</option><option value="Cr">Cr / Faïençage thermique</option><option value="In">In / Inclusions métalliques</option>
+              <option value="Pa">Pa / Incrustations (Patches)</option><option value="PS">PS / Surfaces piquées</option><option value="RS">RS / Calamine incrustée</option><option value="OK">OK / Surface saine (Référence)</option>
+            </select><button class="button icon-button" id="enqueue" type="button" aria-label="Placer sur la pile d'alimentation" title="Placer sur la pile d'alimentation"><svg class="icon"><use href="#i-plus"></use></svg></button></div>
+            <p id="stockNote" role="status">Échantillons réels du jeu d'essai NEU-CLS.</p>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="transport" aria-label="Contrôle de défilement de la ligne">
+      <div class="playback">
+        <button class="play-button" id="play" type="button" aria-label="Suspendre le défilement" title="Lecture / Pause (Espace)"><svg class="icon"><use id="playIcon" href="#i-pause"></use></svg></button>
+        <div><b id="playStatus">En service</b><span class="mono" id="simTime">00:00.0</span></div>
+        <button id="step" class="button icon-button" type="button" title="Avance pas à pas 50 ms (.)" aria-label="Avance pas à pas 50 ms"><svg class="icon"><use href="#i-step"></use></svg></button>
+        <button id="reset" class="button icon-button" type="button" title="Réinitialiser le lot" aria-label="Réinitialiser le lot"><svg class="icon"><use href="#i-reset"></use></svg></button>
+      </div>
+      <div class="speed-control">
+        <label class="section-label" for="speed">VITESSE BANDE</label>
+        <input type="range" id="speed" min="0.25" max="1.20" step="0.05" value="0.80">
+        <output id="speedValue" class="mono" for="speed">0.80 <span>m/s</span></output>
+      </div>
+      <div class="readouts"><div><span class="section-label">CODEUR ROTATIF</span><strong class="mono" id="encoderCount">0</strong></div><div><span class="section-label">ÉTAT DE LA LIGNE</span><strong class="mono" id="lineState">PRÊT</strong></div></div>
+    </footer>
+  </div>
+
+  <noscript><p class="no-script">Cette simulation nécessite un navigateur compatible JavaScript et WebGL 2.</p></noscript>
+  <script type="module" src="/src/App.tsx"></script>
+</body>
+</html>

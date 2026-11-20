@@ -34,5 +34,12 @@ docs/
 data/
 *.zip
 
+# Node & Frontend Builds
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+
 
 

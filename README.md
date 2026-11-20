@@ -26,7 +26,7 @@ Les métriques consolidées sont exportées dans [`results/cross_effects_table.j
 | **S0** | CLIP Linear Probe | 99.44% | 0.9945 | 0.0056 | 21.11% | — (référence) | - | — | COMPLETED |
 | **S1** | SimCLR Linear Probe | 97.22% | 0.9722 | 0.0087 | 15.00% | 0.7118 | - | — | COMPLETED |
 | **S2** | Baseline CNN (Calibré) | 98.06% | 0.9806 | 0.0121 | 21.11% | 0.7663 | - | — | COMPLETED |
-| **S3** | CNN Défense Adversariale | 93.89% | 0.9392 | 0.0379 | 76.11% | - | 0.9090 | — | COMPLETED |
+| **S3** | CNN Défense Adversariale | 93.89% | 0.9389 | 0.0379 | 76.11% | - | 0.9090 | — | COMPLETED |
 | **S4** | EWC + Replay (single-head 3→6) | 86.39% | 0.8633 | 0.0765* | 15.00% | 0.7961 | 0.9831 | 7.22% | COMPLETED |
 
 *Note : les ECE S0 et S2 sont post-calibration (T = 0.4184 et 0.9276). La valeur S3 du tableau (0.0379) correspond au modèle brut ; après temperature scaling (T = 0.6772), l'ECE descend à **0.0306**. Pour S4 (`ewc_replay`, λ = 10), le fit de température a atteint le plancher de l'optimiseur (T = 0,001), hors de la plage autorisée [0,1 ; 10], et la NLL de calibration passait de 0,3914 (T = 1) à 1,1885 : la calibration est rejetée par la règle no-harm de `src/member_c_utils.py` et l'ECE brute (**0,0765**) est reportée avec les probabilités non recalibrées. La ligne S4 correspond à la meilleure variante de la famille EWC (`ewc_replay`, λ = 10) ; le **replay seul** atteint 93,06 % et reste le meilleur modèle S4 toutes familles confondues. Les colonnes `XAI Sim` S1 (0,7118) et S4 (0,7961) ont été mesurées avec le protocole exact de S2 : Grad-CAM 96×96 contre l'attention CLS→patches moyenne sur 12 couches (`results/clip_attn_test.npy`), similarité cosinus, moyenne sur les 360 images de test. S0 sert de référence et n'est donc pas comparée à elle-même ; la colonne `Forgetting` ne s'applique qu'à S4.*
@@ -174,6 +174,8 @@ result = auditor.audit(image_pil, temperature=1.2, epsilon=0.03)
 | Téléchargement | Automatique via KaggleHub puis miroir Figshare (`src/data.py`), aucun fallback synthétique |
 
 Le même contrat de split est utilisé par S0, S1, S2, S3 et S4. Les seeds 42, 123 et 999 sont pré-calculés dans `configs/splits.json` ; le seed 42 est la référence officielle.
+
+> **Périmètre du dataset & décision MVTec AD (§9) :** Conformément à l'arbitrage autorisé par la section 9 du cahier des charges, le benchmark hors-domaine MVTec AD a été écarté au profit d'un protocole industriel 100 % cohérent et rigoureusement contrôlé sur NEU-CLS. Les dérives de distribution et le stress hors-domaine sont évalués via les perturbations adversariales FGSM calibrées ($L_\infty$, $\varepsilon \in [0.0, 0.10]$) et l'élargissement de classes en apprentissage continu (3 $\to$ 6 classes), évitant l'introduction d'artefacts ou de fallbacks synthétiques non comparables.
 
 ### Versions testées
 

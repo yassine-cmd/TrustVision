@@ -139,6 +139,7 @@ def verify_attention_against_clip(
     head_idx: int = 0,
     seq_len: int = 50,
     device: Optional[torch.device] = None,
+    seed: int = 42,
 ) -> Dict[str, Any]:
     """
     Numerically verifies the pure PyTorch ManualScaledDotProductAttention
@@ -167,7 +168,7 @@ def verify_attention_against_clip(
         manual_attn.v_proj.weight.copy_(clip_layer.v_proj.weight[start_idx:end_idx, :])
         manual_attn.v_proj.bias.copy_(clip_layer.v_proj.bias[start_idx:end_idx])
 
-    torch.manual_seed(42)
+    torch.manual_seed(seed)
     x = torch.randn(2, seq_len, embed_dim, device=device)
 
     manual_attn.eval()

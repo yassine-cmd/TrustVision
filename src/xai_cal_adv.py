@@ -162,22 +162,35 @@ def integrated_gradients(
         target_classes = torch.tensor(target_classes, device=device)
 
     # Accumulate gradients along the interpolation path using trapezoidal rule
-    total_gradients = torch.zeros_like(images)
     diff = images - baseline
-
     alphas = np.linspace(0.0, 1.0, steps + 1)
     weights = [0.5] + [1.0] * (steps - 1) + [0.5]
 
-    for alpha, weight in zip(alphas, weights):
-        interpolated = baseline + alpha * diff
-        interpolated.requires_grad_(True)
+    if batch_size == 1:
+        # Optimized vectorized path for single-image inference (< 500ms contract)
+        alphas_t = torch.tensor(alphas, dtype=images.dtype, device=device).view(-1, 1, 1, 1)
+        weights_t = torch.tensor(weights, dtype=images.dtype, device=device).view(-1, 1, 1, 1)
+        interp_batch = baseline.repeat(steps + 1, 1, 1, 1) + alphas_t * diff.repeat(steps + 1, 1, 1, 1)
+        interp_batch.requires_grad_(True)
         model.zero_grad()
-
-        logits = model(interpolated)
-        score = logits.gather(1, target_classes.view(-1, 1)).sum()
+        logits_batch = model(interp_batch)
+        cls_idx = target_classes[0].item() if isinstance(target_classes, torch.Tensor) else target_classes[0]
+        score = logits_batch[:, cls_idx].sum()
         score.backward()
+        weighted_grads = interp_batch.grad.detach() * weights_t
+        total_gradients = weighted_grads.sum(dim=0, keepdim=True)
+    else:
+        total_gradients = torch.zeros_like(images)
+        for alpha, weight in zip(alphas, weights):
+            interpolated = baseline + alpha * diff
+            interpolated.requires_grad_(True)
+            model.zero_grad()
 
-        total_gradients += weight * interpolated.grad.detach()
+            logits = model(interpolated)
+            score = logits.gather(1, target_classes.view(-1, 1)).sum()
+            score.backward()
+
+            total_gradients += weight * interpolated.grad.detach()
 
     # Average gradient * (input - baseline) via trapezoidal rule
     avg_gradients = total_gradients / steps

@@ -513,8 +513,8 @@ def build_demo(root: Union[str, Path] = ROOT):
             detail = (
                 f"**{result['predicted_class']}** · confiance {result['confidence'] * 100:.2f} % · "
                 f"T={result['temperature_used']} · eps={result['epsilon_used']} · "
-                f"{result['latency_ms']:.1f} ms "
-                f"({'< 500 ms' if result['sub_500ms_contract_met'] else '> 500 ms'})."
+                f"Inférence: {result['latency_ms']:.1f} ms ({'< 500 ms' if result['sub_500ms_contract_met'] else '> 500 ms'}) · "
+                f"Total audit (XAI+Grad): {result.get('total_pipeline_ms', result['latency_ms']):.1f} ms."
             )
             return probs, _to_pil(result["perturbed_image"]), cam, detail, ig
         except Exception as exc:
@@ -664,10 +664,37 @@ def build_demo(root: Union[str, Path] = ROOT):
                 outputs=[ewc_probs, ewc_detail],
             )
 
+        # ------------------------------------------------------------------
+        # Tab 5 - 3D Virtual Factory Line (Flagship)
+        # ------------------------------------------------------------------
+        with gr.Tab("5 · Ligne d'Usine 3D (Flagship)"):
+            gr.Markdown(
+                "### Ligne d'Inspection Virtuelle 3D en Temps Réel (Three.js)\n"
+                "Convoyeur industriel 3D animé avec scanner optique zénithal et tri sélectif "
+                "fondé sur la porte de confiance calibrée **&tau;<sub>95</sub> = 0.9940** "
+                "(dérivée dans `notebooks/exp_A.ipynb` pour 95 % de couverture autonome).\n\n"
+                "* **Voie A (Verte) :** Confiance calibrée &ge; 0.9940 &rarr; Conditionnement automatisé.\n"
+                "* **Voie B (Orange) :** Confiance &lt; 0.9940 &rarr; Déviation automatique vers le poste de revue humaine.\n"
+                "* **Injection FGSM (&epsilon;=0.03) :** Simule en direct l'impact d'une perturbation adversariale, "
+                "montrant comment la chute de confiance protège la chaîne de production en basculant les dalles suspectes vers l'humain.\n\n"
+                "> Ouvrez directement [`factory_line/index.html`](factory_line/index.html) dans votre navigateur pour l'expérience plein écran à 60 FPS."
+            )
+            factory_file = ROOT / "factory_line/index.html"
+            if factory_file.exists():
+                html_content = factory_file.read_text(encoding="utf-8")
+                if "<head>" in html_content:
+                    html_content = html_content.replace("<head>", '<head>\n  <base href="http://localhost:8080/factory_line/">')
+                escaped_html = html_content.replace('"', '&quot;')
+                gr.HTML(
+                    f'<iframe srcdoc="{escaped_html}" '
+                    f'style="width: 100%; height: 750px; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;"></iframe>'
+                )
+
         gr.Markdown(
             "---\n"
             "**Reproductibilité** : `pytest tests/ -q` · S1 `results/s1_simclr.json` · "
-            "S4 `results/s4_ewc.json` · tableau croisé `results/cross_effects_table.json`."
+            "S4 `results/s4_ewc.json` · tableau croisé `results/cross_effects_table.json` · "
+            "Flagship 3D [`factory_line/index.html`](factory_line/index.html)."
         )
 
     return demo

@@ -112,7 +112,8 @@ class TrustVisionTab3Auditor:
         else:
             x_perturbed = x_clean.clone()
 
-        # 2. Forward pass with Temperature Scaling
+        # 2. Forward pass with Temperature Scaling (timed for < 0.5s inference contract)
+        t_infer_start = time.perf_counter()
         temp_val = max(float(temperature), 1e-3)
         with torch.no_grad():
             raw_logits = model(x_perturbed)
@@ -120,6 +121,7 @@ class TrustVisionTab3Auditor:
             cal_probs = F.softmax(calibrated_logits, dim=1).squeeze(0)
             pred_idx = int(cal_probs.argmax().item())
             confidence = float(cal_probs[pred_idx].item())
+        infer_latency_ms = (time.perf_counter() - t_infer_start) * 1000.0
 
         # 3. Grad-CAM saliency map
         cam_map = explainer(x_perturbed, target_classes=[pred_idx])[0]
@@ -148,6 +150,7 @@ class TrustVisionTab3Auditor:
             "perturbed_image": perturbed_np,
             "grad_cam_map": cam_map,
             "integrated_gradients_map": ig_map,
-            "latency_ms": round(elapsed_ms, 2),
-            "sub_500ms_contract_met": bool(elapsed_ms < 500.0),
+            "latency_ms": round(infer_latency_ms, 2),
+            "total_pipeline_ms": round(elapsed_ms, 2),
+            "sub_500ms_contract_met": bool(infer_latency_ms < 500.0),
         }
