@@ -1001,7 +1001,7 @@ def build_demo(root: Union[str, Path] = ROOT):
                 label="Gabarit sémantique ({defect} : classe de défaut ciblée)",
             )
             clip_button = gr.Button("Exécuter l'analyse spatio-sémantique", variant="primary")
-            clip_scores = gr.Label(num_top_classes=3, label="Distribution des probabilités Zero-Shot")
+            clip_scores = gr.Label(num_top_classes=6, label="Distribution des probabilités Zero-Shot")
             clip_note = gr.HTML()
 
             gr.Examples(
@@ -1027,7 +1027,7 @@ def build_demo(root: Union[str, Path] = ROOT):
             simclr_plot = gr.Plot(value=simclr_tab.label_efficiency_figure(), label="Télémétrie S1")
             with gr.Row():
                 simclr_image = gr.Image(type="pil", label="Échantillon surfacique (NEU-CLS)")
-                simclr_probs = gr.Label(num_top_classes=3, label="Probabilités d'appartenance de classe")
+                simclr_probs = gr.Label(num_top_classes=6, label="Probabilités d'appartenance de classe")
             simclr_choice = gr.Dropdown(
                 choices=list(simclr_tab.choices.keys()) or ["Aucun point de contrôle disponible"],
                 value=(list(simclr_tab.choices.keys())[0] if simclr_tab.choices else None),
@@ -1070,7 +1070,7 @@ def build_demo(root: Union[str, Path] = ROOT):
                 tab3_ig = gr.Checkbox(value=True, label="Attribution axiomatique (Integrated Gradients)")
             tab3_button = gr.Button("Lancer l'audit de confiance complet", variant="primary")
             with gr.Row():
-                tab3_probs = gr.Label(num_top_classes=3, label="Distribution des probabilités étalonnées")
+                tab3_probs = gr.Label(num_top_classes=6, label="Distribution des probabilités étalonnées")
                 tab3_cam = gr.Image(type="pil", label="Explicabilité spatiale Grad-CAM")
                 tab3_ig_map = gr.Image(type="pil", label="Attribution d'importance Integrated Gradients")
             tab3_detail = gr.HTML()
@@ -1119,7 +1119,7 @@ def build_demo(root: Union[str, Path] = ROOT):
             )
             with gr.Row():
                 ewc_image = gr.Image(type="pil", label="Échantillon surfacique (NEU-CLS)")
-                ewc_probs = gr.Label(num_top_classes=3, label="Probabilités prédites par la stratégie")
+                ewc_probs = gr.Label(num_top_classes=6, label="Probabilités prédites par la stratégie")
             ewc_button = gr.Button("Inférence avec la configuration sélectionnée", variant="primary")
             ewc_detail = gr.HTML()
 
@@ -1225,7 +1225,7 @@ def main() -> None:
     demo = build_demo()
     app = FastAPI(title="TrustVision")
 
-    @app.get("/factory-line")
+    @app.api_route("/factory-line", methods=["GET", "HEAD"])
     def serve_factory_line():
         html_path = ROOT / "factory_line/index.html"
         return FileResponse(html_path, media_type="text/html")
