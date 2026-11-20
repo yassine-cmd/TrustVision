@@ -9,7 +9,7 @@ Integrates the full research & deployment pipeline (S0 through S5):
 * 02 · Efficacité d'Annotation (SimCLR) : Self-supervised contrastive learning vs scratch CNN under 1-100% labels.
 * 03 · Audit de Confiance & Défense FGSM : Bayesian temperature scaling, adversarial stress testing & XAI (Grad-CAM, IG).
 * 04 · Extension Continue & Replay (EWC) : Elastic Weight Consolidation synaptic preservation on single-head expansion.
-* 05 · Jumeau Numérique 3D (Ligne 04) : Real-time Three.js WebGL digital twin with calibrated pneumatic sorting.
+* 05 · Inspection & Tri Automatisé : Real-time Three.js WebGL conveyor inspection line with calibrated pneumatic sorting.
 """
 
 from __future__ import annotations
@@ -1112,21 +1112,21 @@ def build_demo(root: Union[str, Path] = ROOT):
             )
 
         # ------------------------------------------------------------------
-        # Tab 5 - 3D Virtual Factory Line (Digital Twin)
+        # Tab 5 - Inspection & Tri Automatisé
         # ------------------------------------------------------------------
-        with gr.Tab("05 · JUMEAU NUMÉRIQUE 3D (LIGNE 04)"):
+        with gr.Tab("05 · INSPECTION & TRI AUTOMATISÉ"):
             gr.HTML(
                 """
                 <div class="tv-dispatch-panel">
                   <div class="tv-dispatch-header">
                     <div>
-                      <div class="tv-station-id">STATION 04 &mdash; POSTE DE CONTRÔLE OPTIQUE & TRI PNEUMATIQUE</div>
-                      <div class="tv-dispatch-title">Jumeau Numérique Industriel 3D</div>
+                      <div class="tv-station-id">POSTE DE CONTRÔLE OPTIQUE & TRI PNEUMATIQUE</div>
+                      <div class="tv-dispatch-title">Ligne d'Inspection & Tri Automatisé</div>
                       <div class="tv-dispatch-sub">Simulation physique Three.js WebGL (60 FPS) &bull; Convoyeur 0.85 m/s &bull; Aiguilleur bistable piloté par seuil bayésien &tau;<sub>95</sub> = 0.9940</div>
                     </div>
                     <div>
                       <a href="/factory-line" target="_blank" class="tv-launch-btn">
-                        <span>Ouvrir la Station 3D</span>
+                        <span>Ouvrir la Ligne de Tri</span>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                       </a>
                     </div>

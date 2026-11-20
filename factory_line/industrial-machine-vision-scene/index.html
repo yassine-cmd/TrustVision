@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111518">
   <meta name="description" content="Cellule industrielle de contrôle non-destructif et de tri automatisé multi-baies pour tôles d'acier. Vision linéaire 4K, classification par réseau de neurones convolutif et explicabilité Grad-CAM.">
-  <title>TrustVision | Contrôle Qualité & Tri Automatisé Ligne 04</title>
+  <title>TrustVision | Contrôle Qualité & Tri Automatisé</title>
   <link rel="stylesheet" href="/src/styles.css">
 </head>
 <body>
@@ -34,14 +34,48 @@
   </svg>
   <canvas id="hmiDisplay" width="640" height="384" style="display:none" aria-hidden="true"></canvas>
 
+  <style>
+    .return-gradio-btn {
+      text-decoration: none !important;
+      color: var(--ink) !important;
+      gap: 7px;
+      padding: 6px 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      border: 1px solid var(--strong-border) !important;
+      background: #1a2024 !important;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      transition: all .18s ease;
+      cursor: pointer;
+    }
+    .return-gradio-btn:hover {
+      border-color: var(--amber) !important;
+      color: var(--amber) !important;
+      background: #242c31 !important;
+    }
+    .return-gradio-btn svg {
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+  </style>
+
   <div class="app" id="app">
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark"><svg class="icon"><use href="#i-logo"></use></svg></div>
         <div><div class="wordmark">Trust<span>Vision</span></div><div class="brand-caption">CONTRÔLE INDUSTRIEL & TRI AUTOMATISÉ</div></div>
       </div>
-      <div class="breadcrumb"><span>Ligne 04</span><span class="crumb-slash">/</span><b>Poste de Contrôle Surfacique & Tri Multi-Baies</b></div>
+      <div class="breadcrumb"><b>Poste de Contrôle Surfacique & Tri Multi-Baies</b></div>
       <div class="top-actions">
+        <a href="/" id="btnReturnGradio" class="button return-gradio-btn" title="Retourner à la console Gradio">
+          <svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>Retour Console Gradio</span>
+        </a>
         <span class="mode-indicator" id="modeIndicator"><i></i><span>Automate API & Modèle S2 : En ligne</span></span>
       </div>
     </header>
@@ -52,7 +86,7 @@
           <div id="viewport"></div>
           <div class="stage-shade"></div>
           <div class="stage-heading">
-            <div class="eyebrow"><span></span> CELLULE DE CONTRÔLE <b>/</b> LIGNE 04</div>
+            <div class="eyebrow"><span></span> CELLULE DE CONTRÔLE & TRI OPTIQUE</div>
             <h1 id="cellTitle">Cellule de Contrôle & Tri Multi-Baies</h1>
             <p id="viewText">Contrôle optique surfacique haute cadence et aiguillage pneumatique</p>
           </div>
@@ -192,5 +226,22 @@
 
   <noscript><p class="no-script">Cette simulation nécessite un navigateur compatible JavaScript et WebGL 2.</p></noscript>
   <script type="module" src="/src/App.tsx"></script>
+  <script>
+    (function() {
+      const btn = document.getElementById('btnReturnGradio');
+      if (!btn) return;
+      if (window.location.port && window.location.port !== '7860') {
+        btn.href = window.location.protocol + '//' + window.location.hostname + ':7860/';
+      }
+      btn.addEventListener('click', function(e) {
+        if (window.opener && !window.opener.closed) {
+          e.preventDefault();
+          try { window.opener.focus(); } catch (_) {}
+          window.close();
+          setTimeout(function() { window.location.href = btn.href; }, 120);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
