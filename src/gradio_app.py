@@ -128,34 +128,6 @@ body, .gradio-container {
   line-height: 1.4;
 }
 
-.tv-telemetry-cluster {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.tv-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: #0f172a;
-  border: 1px solid #1e293b;
-  padding: 5px 12px;
-  border-radius: 4px;
-  font-family: var(--tv-font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: #cbd5e1;
-}
-
-.tv-pill-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 6px #10b981;
-}
-
 /* Tabs Navigation */
 .tabs > .tab-nav {
   border-bottom: 1px solid #1f293d !important;
@@ -972,14 +944,9 @@ def build_demo(root: Union[str, Path] = ROOT):
             """
             <div class="tv-header">
               <div>
-                <div class="tv-badge">TRUSTVISION CORE v2.4 &mdash; CONSOLE D'INSPECTION INDUSTRIELLE</div>
+                <div class="tv-badge">TRUSTVISION CORE v2.4</div>
                 <h1 class="tv-title">Station de Contrôle Qualité Surfacique (NEU-CLS)</h1>
-                <p class="tv-subtitle">Supervision avancée des modèles d'inspection optique haute cadence (S0 &rarr; S5) &mdash; Détection de défauts d'acier laminé</p>
-              </div>
-              <div class="tv-telemetry-cluster">
-                <span class="tv-pill"><span class="tv-pill-dot"></span> OPÉRATIONNEL</span>
-                <span class="tv-pill">ISO/IEC 25010</span>
-                <span class="tv-pill">LATENCE &lt; 500 ms</span>
+                <p class="tv-subtitle">Inspection optique automatisée des défauts d'acier laminé &mdash; Modèles S0 à S5</p>
               </div>
             </div>
             """
@@ -1206,14 +1173,8 @@ def build_demo(root: Union[str, Path] = ROOT):
         gr.HTML(
             """
             <div class="tv-footer">
-              <div>
-                <strong>TRUSTVISION CORE v2.4 &mdash; CONTRÔLE SURFACIQUE NEU-CLS</strong><br>
-                Architecture certifiée &bull; Métrologie ISO/IEC 25010
-              </div>
-              <div style="text-align: right;">
-                Validation : <code>pytest tests/ (53/53 PASSED)</code> &bull; <code>mechanics.test.mjs (7/7 PASSED)</code><br>
-                Bancs de tests automatisés &bull; Modèles S0 à S5
-              </div>
+              <div>TRUSTVISION CORE v2.4 &mdash; Inspection Qualité Surfacique NEU-CLS</div>
+              <div>Bancs de tests automatisés : <code>pytest (53/53)</code> &bull; <code>mechanics (7/7)</code></div>
             </div>
             """
         )
