@@ -41,8 +41,15 @@ from torchvision import transforms
 
 from src.data import NEU_CLASSES
 from src.eval import load_model_checkpoint
+import gradio as gr
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
 
 ROOT = Path(__file__).resolve().parents[1]
+try:
+    gr.set_static_paths([str(ROOT / "factory_line")])
+except Exception:
+    pass
 
 S1_PROBE_PATTERN = "checkpoints/s1_simclr_probe_{fraction}pct.pt"
 S1_SCRATCH_PATTERN = "checkpoints/s1_scratch_{fraction}pct.pt"
@@ -669,26 +676,34 @@ def build_demo(root: Union[str, Path] = ROOT):
         # ------------------------------------------------------------------
         with gr.Tab("5 · Ligne d'Usine 3D (Flagship)"):
             gr.Markdown(
-                "### Ligne d'Inspection Virtuelle 3D en Temps Réel (Three.js)\n"
-                "Convoyeur industriel 3D animé avec scanner optique zénithal et tri sélectif "
-                "fondé sur la porte de confiance calibrée **&tau;<sub>95</sub> = 0.9940** "
-                "(dérivée dans `notebooks/exp_A.ipynb` pour 95 % de couverture autonome).\n\n"
-                "* **Voie A (Verte) :** Confiance calibrée &ge; 0.9940 &rarr; Conditionnement automatisé.\n"
-                "* **Voie B (Orange) :** Confiance &lt; 0.9940 &rarr; Déviation automatique vers le poste de revue humaine.\n"
-                "* **Injection FGSM (&epsilon;=0.03) :** Simule en direct l'impact d'une perturbation adversariale, "
-                "montrant comment la chute de confiance protège la chaîne de production en basculant les dalles suspectes vers l'humain.\n\n"
-                "> Ouvrez directement [`factory_line/index.html`](factory_line/index.html) dans votre navigateur pour l'expérience plein écran à 60 FPS."
+                "### 🏭 Ligne d'Inspection Virtuelle 3D en Temps Réel (Three.js)\n\n"
+                "Jumeau numérique industriel animé à 60 FPS avec scanner optique zénithal, "
+                "banc d'aiguillage pneumatique et simulation de rejet basée sur le modèle calibré.\n\n"
+                "#### 📐 Architecture & Spécifications Industrielles :\n"
+                "* **Porte de confiance calibrée :** &tau;<sub>95</sub> = 0.9940 (dérivée dans `notebooks/exp_A.ipynb` pour garantir 95 % de couverture autonome).\n"
+                "* **Voie A (Verte) :** Confiance calibrée &ge; 0.9940 &rarr; Conditionnement automatisé haute cadence.\n"
+                "* **Voie B (Orange) :** Confiance &lt; 0.9940 &rarr; Déviation vers poste de revue humaine (`CONTRÔLE`).\n"
+                "* **Stress test adversarial FGSM (&epsilon; = 0.03) :** Démonstration en direct du basculement sécurisé vers l'opérateur dès que la confiance chute sous l'effet d'une perturbation.\n"
+                "* **Moteur physique & rendu :** Moteur Three.js WebGL 2 autonome, cinématique de chute vérifiée par 7 bancs de tests, éclairage PBR et capteur linéaire 4K."
             )
-            factory_file = ROOT / "factory_line/index.html"
-            if factory_file.exists():
-                html_content = factory_file.read_text(encoding="utf-8")
-                if "<head>" in html_content:
-                    html_content = html_content.replace("<head>", '<head>\n  <base href="http://localhost:8080/factory_line/">')
-                escaped_html = html_content.replace('"', '&quot;')
-                gr.HTML(
-                    f'<iframe srcdoc="{escaped_html}" '
-                    f'style="width: 100%; height: 750px; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;"></iframe>'
-                )
+            gr.HTML(
+                """
+                <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 28px; text-align: center; margin: 20px 0;">
+                    <div style="font-size: 20px; font-weight: 700; color: #10b981; margin-bottom: 8px;">
+                        Expérience Plein Écran Haute Résolution (60 FPS)
+                    </div>
+                    <p style="color: #94a3b8; font-size: 14px; max-width: 650px; margin: 0 auto 20px auto; line-height: 1.5;">
+                        Pour une ergonomie optimale et un affichage 3D natif sans contrainte de formatage ni barre de défilement, la simulation s'exécute dans un onglet dédié plein écran.
+                    </p>
+                    <a href="/factory-line" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; padding: 14px 28px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35); transition: transform 0.15s ease;">
+                        <span>🚀 Ouvrir la Ligne 3D Plein Écran (Nouvel Onglet)</span>
+                    </a>
+                    <div style="margin-top: 18px; font-size: 12px; color: #64748b;">
+                        Contrôles : <strong>1 à 6</strong> (caméras) · <strong>Espace</strong> (pause) · <strong>.</strong> (pas à pas) · <strong>Clic droit / Molette</strong> (translation / zoom)
+                    </div>
+                </div>
+                """
+            )
 
         gr.Markdown(
             "---\n"
@@ -702,7 +717,16 @@ def build_demo(root: Union[str, Path] = ROOT):
 
 def main() -> None:
     demo = build_demo()
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False, debug=False)
+    app = FastAPI(title="TrustVision")
+
+    @app.get("/factory-line")
+    def serve_factory_line():
+        html_path = ROOT / "factory_line/index.html"
+        return FileResponse(html_path, media_type="text/html")
+
+    app = gr.mount_gradio_app(app, demo, path="/")
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)
 
 
 if __name__ == "__main__":
