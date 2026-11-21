@@ -410,7 +410,10 @@ class TrustVisionOODPipeline:
         # 2. Stage 2: Forward pass & feature extraction
         with torch.no_grad():
             features = self.model.get_features(tensor)
-            logits = self.model(tensor)
+            if hasattr(self.model, "fc"):
+                logits = self.model.fc(features)
+            else:
+                logits = self.model(tensor)
 
         feat_norm = float(features.norm(dim=1)[0].item())
 
