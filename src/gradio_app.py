@@ -31,6 +31,24 @@ from torchvision import transforms
 
 from src.data import NEU_CLASSES
 from src.eval import load_model_checkpoint
+# Backward-compatibility shim for gradio 4.44.1 under huggingface_hub >= 1.0.0
+try:
+    import huggingface_hub
+    if not hasattr(huggingface_hub, "HfFolder"):
+        class _HfFolderShim:
+            @staticmethod
+            def get_token():
+                return getattr(huggingface_hub, "get_token", lambda: None)()
+            @staticmethod
+            def save_token(token):
+                pass
+            @staticmethod
+            def delete_token():
+                pass
+        huggingface_hub.HfFolder = _HfFolderShim
+except Exception:
+    pass
+
 import gradio as gr
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
@@ -841,8 +859,6 @@ class EWCTab:
 
 def build_demo(root: Union[str, Path] = ROOT):
     """Builds the 5-tab production-grade Gradio Blocks telemetry app."""
-    import gradio as gr
-
     root = Path(root)
     clip_tab = ClipAttentionTab(root)
     simclr_tab = SimCLRTab(root)
@@ -901,6 +917,10 @@ def build_demo(root: Union[str, Path] = ROOT):
             status_color = "#ef4444" if result.get("is_ood") else "#ffffff"
             conf_color = "#ef4444" if result.get("is_ood") else "#10b981"
             mahal_color = "#ef4444" if result.get("is_ood") else "#10b981"
+            latency_val = result.get('latency_ms', 0.0)
+            latency_ok = latency_val < 500.0
+            latency_status = "(&lt; 500 ms CONFORME)" if latency_ok else "(&ge; 500 ms NON-CONFORME)"
+            latency_color = "#10b981" if latency_ok else "#ef4444"
 
             detail = f"""
 <div class="tv-card">
@@ -910,7 +930,7 @@ def build_demo(root: Union[str, Path] = ROOT):
     <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Confiance Étalonnée :</span><br><strong style="color:{conf_color}; font-size:15px;">{conf_val:.2f} %</strong></div>
     <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Distance Mahalanobis :</span><br><span style="color:{mahal_color}; font-family:monospace; font-weight:700; font-size:13px;">D<sub>M</sub> = {result.get('mahalanobis_dist', 0.0):.1f}</span> <span style="color:#64748b; font-size:11px;">(&le; {result.get('ood_threshold', 0.0):.1f})</span></div>
     <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Perturbation FGSM &epsilon; :</span><br><span style="color:#f59e0b; font-family:monospace; font-size:13px;">{result['epsilon_used']:.3f}</span></div>
-    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Latence Inférence :</span><br><span style="color:#10b981; font-family:monospace; font-weight:700; font-size:13px;">{result['latency_ms']:.1f} ms (&lt; 500 ms CONFORME)</span></div>
+    <div><span style="color:#94a3b8; font-size:11px; text-transform:uppercase;">Latence Inférence :</span><br><span style="color:{latency_color}; font-family:monospace; font-weight:700; font-size:13px;">{latency_val:.1f} ms {latency_status}</span></div>
   </div>
   <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #1f293d; font-size: 12px;">
     <strong>Décision d'Aiguillage :</strong> {route_status}
@@ -1138,7 +1158,7 @@ def build_demo(root: Union[str, Path] = ROOT):
                       <div class="tv-dispatch-sub">Simulation physique Three.js WebGL (60 FPS) &bull; Convoyeur 0.85 m/s &bull; Aiguilleur bistable piloté par seuil bayésien &tau;<sub>95</sub> = 0.9940</div>
                     </div>
                     <div>
-                      <a href="/factory-line" target="_blank" class="tv-launch-btn">
+                      <a href="/file=factory_line/index.html" target="_blank" class="tv-launch-btn">
                         <span>Ouvrir la Ligne de Tri</span>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                       </a>
@@ -1187,7 +1207,7 @@ def build_demo(root: Union[str, Path] = ROOT):
             """
             <div class="tv-footer">
               <div>TRUSTVISION CORE v2.4 &mdash; Inspection Qualité Surfacique NEU-CLS</div>
-              <div>Bancs de tests automatisés : <code>pytest (66/66)</code> &bull; <code>mechanics (7/7)</code> &bull; <code>OOD certifié (FPR &lt; 0.3%)</code></div>
+              <div>Bancs de tests automatisés : <code>pytest (94/94)</code> &bull; <code>mechanics (7/7)</code> &bull; <code>OOD certifié (FPR &lt; 0.3%)</code></div>
             </div>
             """
         )

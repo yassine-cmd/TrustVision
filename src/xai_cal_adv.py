@@ -424,12 +424,14 @@ def fit_and_evaluate_temperature_scaling(
 def evaluate_fgsm_sweep(
     model: nn.Module,
     test_loader: DataLoader,
-    epsilons: List[float] = [0.0, 0.01, 0.03, 0.05, 0.10],
+    epsilons: Optional[List[float]] = None,
     device: Optional[torch.device] = None,
 ) -> Dict[str, Any]:
     """
     Evaluates model accuracy and NLL under FGSM attack across a range of epsilon budgets.
     """
+    if epsilons is None:
+        epsilons = [0.0, 0.01, 0.03, 0.05, 0.10]
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -478,7 +480,7 @@ def compare_clean_vs_adversarial(
     adv_checkpoint: Union[str, Path, nn.Module],
     test_loader: DataLoader,
     device: torch.device,
-    epsilons: List[float] = [0.0, 0.01, 0.03, 0.05, 0.10],
+    epsilons: Optional[List[float]] = None,
     compute_explanation_stability: bool = True,
     n_xai_samples: Optional[int] = None,
 ) -> Dict[str, Any]:
@@ -489,6 +491,8 @@ def compare_clean_vs_adversarial(
     3. Calibration metrics (ECE)
     4. Explanation stability: cosine similarity of Grad-CAM and IG maps before vs after defense.
     """
+    if epsilons is None:
+        epsilons = [0.0, 0.01, 0.03, 0.05, 0.10]
     clean_model = load_model_checkpoint(clean_checkpoint, device=device)
     adv_model = load_model_checkpoint(adv_checkpoint, device=device)
 

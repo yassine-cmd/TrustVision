@@ -41,6 +41,7 @@ class TrustVisionTab3Auditor:
         self.device = device
         self.classes = NEU_CLASSES
         self.sanitizer = InputSanitizer(target_size=96, min_res=16)
+        self.energy_detector = EnergyOODDetector(temperature=0.9276, min_energy_score=2.0, max_energy_score=40.0)
 
         print(f"[Gradio Tab 3] Pre-loading models and OOD detectors on {self.device}...")
         self.models = {
@@ -124,12 +125,12 @@ class TrustVisionTab3Auditor:
         else:
             x_perturbed = x_clean.clone()
 
-        # 3. Forward pass & Feature extraction (timed for < 0.5s inference contract)
+        # 3. Single forward pass & Feature extraction (timed for < 0.5s inference contract)
         t_infer_start = time.perf_counter()
         temp_val = max(float(temperature), 1e-3)
         with torch.no_grad():
             features = model.get_features(x_perturbed)
-            raw_logits = model(x_perturbed)
+            raw_logits = model.fc(features)
             calibrated_logits = raw_logits / temp_val
             cal_probs = F.softmax(calibrated_logits, dim=1).squeeze(0)
             pred_idx = int(cal_probs.argmax().item())
@@ -137,13 +138,13 @@ class TrustVisionTab3Auditor:
 
         infer_latency_ms = (time.perf_counter() - t_infer_start) * 1000.0
 
-        # 4. Scientific OOD Gating (Mahalanobis feature distance & Energy score)
+        # 4. Scientific OOD Gating (Mahalanobis feature distance & Energy score at calibrated T=0.9276)
         feat_norm = float(features.norm(dim=1)[0].item())
         m_dist = float(ood_det.compute_distances(features)[0].item()) if ood_det.centroids is not None else 0.0
-        energy_score = float((temp_val * torch.logsumexp(raw_logits / temp_val, dim=1))[0].item())
+        energy_score = float(self.energy_detector.compute_energy_score(raw_logits)[0].item())
 
         is_mahal_ood = bool(m_dist > ood_det.threshold)
-        is_energy_ood = bool(energy_score > 40.0)
+        is_energy_ood = bool((energy_score < self.energy_detector.min_energy_score) or (energy_score > self.energy_detector.max_energy_score))
         is_norm_ood = bool(feat_norm > 50.0)
 
         is_ood = is_mahal_ood or is_energy_ood or is_norm_ood
@@ -151,7 +152,10 @@ class TrustVisionTab3Auditor:
         if is_mahal_ood:
             reasons.append(f"Mahalanobis D_M {m_dist:.1f} > {ood_det.threshold:.1f}")
         if is_energy_ood:
-            reasons.append(f"Énergie S_E {energy_score:.1f} > 40.0")
+            if energy_score < 2.0:
+                reasons.append(f"Énergie S_E {energy_score:.1f} < 2.0 (OOD)")
+            else:
+                reasons.append(f"Énergie S_E {energy_score:.1f} > 40.0 (Divergence)")
         if is_norm_ood:
             reasons.append(f"Norme ||z|| {feat_norm:.1f} > 50.0")
         ood_reason = " & ".join(reasons) if reasons else None

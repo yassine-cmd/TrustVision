@@ -121,12 +121,19 @@ def test_mahalanobis_detects_checkerboard():
 # ==============================================================================
 
 def test_energy_ood_detector():
-    energy_det = EnergyOODDetector(temperature=0.9276, max_energy_score=40.0)
+    energy_det = EnergyOODDetector(temperature=0.9276, min_energy_score=2.0, max_energy_score=40.0)
     normal_logits = torch.tensor([[5.0, 1.0, -1.0, 0.0, -2.0, 0.5]])
     is_ood, score = energy_det.is_ood(normal_logits)
     assert is_ood[0].item() is False
-    assert score[0].item() < 40.0
+    assert 2.0 <= score[0].item() <= 40.0
 
+    # Test standard low-energy OOD (flat/uncertain logits from Liu et al. 2020)
+    flat_logits = torch.zeros((1, 6))  # S_E = T * ln(6) ≈ 1.66 < 2.0
+    is_ood_flat, score_flat = energy_det.is_ood(flat_logits)
+    assert is_ood_flat[0].item() is True
+    assert score_flat[0].item() < 2.0
+
+    # Test high-energy anomalous divergence
     exploded_logits = torch.tensor([[70.0, -50.0, 10.0, -30.0, -50.0, -20.0]])
     is_ood_exp, score_exp = energy_det.is_ood(exploded_logits)
     assert is_ood_exp[0].item() is True

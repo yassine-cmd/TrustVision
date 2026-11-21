@@ -324,10 +324,19 @@ class EnergyOODDetector:
     Energy-based Out-of-Distribution detector (Liu et al., NeurIPS 2020).
     Computes Helmholtz free energy E(x) = -T * log sum_c exp(f_c(x) / T).
     Negative energy score S_E(x) = -E(x) tracks log-marginal density log p(x).
+
+    Standard OOD inputs with flat/uncertain logits exhibit low energy scores S_E(x) < min_energy_score.
+    Anomalous high-frequency noise inputs exhibit exploding scores S_E(x) > max_energy_score.
     """
 
-    def __init__(self, temperature: float = 0.9276, max_energy_score: float = 40.0):
+    def __init__(
+        self,
+        temperature: float = 0.9276,
+        min_energy_score: float = 2.0,
+        max_energy_score: float = 40.0,
+    ):
         self.temperature = float(temperature)
+        self.min_energy_score = float(min_energy_score)
         self.max_energy_score = float(max_energy_score)
 
     def compute_energy_score(self, logits: torch.Tensor) -> torch.Tensor:
@@ -337,10 +346,11 @@ class EnergyOODDetector:
 
     def is_ood(self, logits: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
-        Flags samples whose energy score explodes due to uncorrelated high-magnitude logits.
+        Flags samples whose energy score is either too low (standard OOD flat logits)
+        or too high (uncorrelated high-magnitude exploding logits).
         """
         scores = self.compute_energy_score(logits)
-        is_ood_mask = scores > self.max_energy_score
+        is_ood_mask = (scores < self.min_energy_score) | (scores > self.max_energy_score)
         return is_ood_mask, scores
 
 
@@ -410,7 +420,10 @@ class TrustVisionOODPipeline:
         # 2. Stage 2: Forward pass & feature extraction
         with torch.no_grad():
             features = self.model.get_features(tensor)
-            logits = self.model(tensor)
+            if hasattr(self.model, "fc"):
+                logits = self.model.fc(features)
+            else:
+                logits = self.model(tensor)
 
         feat_norm = float(features.norm(dim=1)[0].item())
 
@@ -418,9 +431,9 @@ class TrustVisionOODPipeline:
         m_dist = float(self.mahalanobis.compute_distances(features)[0].item())
         is_mahal_ood = bool(m_dist > self.mahalanobis.threshold)
 
-        # 4. Stage 4: Energy Anomaly Check
+        # 4. Stage 4: Dual-Threshold Energy Anomaly Check (Liu et al. NeurIPS 2020)
         energy_score = float(self.energy.compute_energy_score(logits)[0].item())
-        is_energy_ood = bool(energy_score > self.energy.max_energy_score)
+        is_energy_ood = bool((energy_score < self.energy.min_energy_score) or (energy_score > self.energy.max_energy_score))
 
         # Composite OOD disposition
         is_ood = is_mahal_ood or is_energy_ood or (feat_norm > 50.0)
@@ -430,7 +443,10 @@ class TrustVisionOODPipeline:
             if is_mahal_ood:
                 reasons.append(f"MAHALANOBIS_OUTLIER ({m_dist:.1f} > {self.mahalanobis.threshold:.1f})")
             if is_energy_ood:
-                reasons.append(f"ENERGY_ANOMALY ({energy_score:.1f} > {self.energy.max_energy_score:.1f})")
+                if energy_score < self.energy.min_energy_score:
+                    reasons.append(f"LOW_ENERGY_OOD ({energy_score:.1f} < {self.energy.min_energy_score:.1f})")
+                else:
+                    reasons.append(f"ENERGY_ANOMALY ({energy_score:.1f} > {self.energy.max_energy_score:.1f})")
             if feat_norm > 50.0:
                 reasons.append(f"FEATURE_EXPLOSION (norm {feat_norm:.1f} > 50.0)")
             ood_reason = " & ".join(reasons)
